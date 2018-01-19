@@ -190,7 +190,8 @@ class Checkout extends Model
     {
         $this->syncSession();
 
-        $provider = isset(Request::get('checkout')['payment']['provider']) ? Request::get('checkout')['payment']['provider'] : null;
+        $provider = isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : null;
 
         if ($provider != 'paypal') {
             Log::info('stripe payment');
