@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Maxfactor\Checkout\Checkout;
 use Illuminate\Http\Request;
 use Session;
-use Log;
 
 class CheckoutController extends Controller
 {
@@ -31,8 +30,6 @@ class CheckoutController extends Controller
      */
     public function store(Request $request, $uid, $stage = 'default')
     {
-        Log::info('checkout controller @ store');
-
         $checkout = new Checkout($uid, $request->all());
 
         $result = $checkout
@@ -52,7 +49,6 @@ class CheckoutController extends Controller
      */
     public function show($uid, $stage = 'default')
     {
-        Log::info('checkout controller @ show');
         // TODO: validate data stored in cart / checkout
         $checkout = new Checkout(
             $uid,

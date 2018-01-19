@@ -15,7 +15,6 @@ use App\Postage;
 use App\Handlers\Payment;
 use App\Handlers\Paypal;
 use Illuminate\Support\Collection;
-use Log;
 
 class Checkout extends Model
 {
@@ -128,7 +127,6 @@ class Checkout extends Model
      */
     public function checkoutStageShowShipping()
     {
-        Log::info(Session::get("checkout.{$this->uid}"));
         $postage = new Postage(null, Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray());
 
         // add postage rates to model response
@@ -194,7 +192,6 @@ class Checkout extends Model
             Request::get('checkout')['payment']['provider'] : null;
 
         if ($provider != 'paypal') {
-            Log::info('stripe payment');
             Validator::make(Request::get('checkout')['billing'], [
                 'nameoncard' => 'required|string',
             ])->validate();
@@ -235,8 +232,6 @@ class Checkout extends Model
                 'currency' => 'GBP',
             ])->send();
         } else {
-            Log::info('stripe payment');
-
             $token = Request::get('checkout')['payment']['token']['id'];
             $amount = floatval($this->getFirst('finalTotal'));
             $orderReference = $this->getFirst('orderID');
