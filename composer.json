@@ -1,7 +1,10 @@
 {
     "name": "maxfactor/checkout",
     "description": "'Maxfactor checkout'",
-    "require": {},
+    "require": {
+        "omnipay/paypal": "~2.0",
+        "omnipay/stripe": "^2.4"
+    },
     "autoload": {
         "psr-4": {
             "Maxfactor\\Checkout\\": "src"
