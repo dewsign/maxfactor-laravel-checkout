@@ -3,7 +3,6 @@
 namespace Maxfactor\Checkout;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\AliasLoader;
 
 class CheckoutServiceProvider extends ServiceProvider
 {
@@ -14,10 +13,7 @@ class CheckoutServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        AliasLoader::getInstance([
-            'Payment' => '\Maxfactor\Checkout\Handlers\Payment',
-            'Paypal' => '\Maxfactor\Checkout\Handlers\Paypal',
-        ]);
+        //
     }
 
     /**
