@@ -6,5 +6,8 @@
         "psr-4": {
             "Maxfactor\\Checkout\\": "src"
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.1"
     }
 }
