@@ -3,7 +3,7 @@
 namespace Maxfactor\Checkout;
 
 use App\Http\Controllers\Controller;
-use Maxfactor\Checkout\Checkout;
+use App\Checkout;
 use Illuminate\Http\Request;
 use Session;
 
