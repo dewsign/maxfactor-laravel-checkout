@@ -13,7 +13,11 @@ class CheckoutServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
+
+        $this->publishes([
+            __DIR__.'/config/maxfactor-checkout.php' => config_path('maxfactor-checkout.php')
+        ]);
     }
 
     /**
@@ -23,7 +27,12 @@ class CheckoutServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/routes.php';
-        $this->app->make('Maxfactor\Checkout\CheckoutController');
+        $this->mergeConfigFrom(__DIR__.'/config/maxfactor-checkout.php', 'maxfactor-checkout');
+
+        $this->app->bind('Maxfactor\Checkout\Contracts\Checkout', config('maxfactor-checkout.driver'));
+        // dd($this->app->make('router'));
+        $this->app->when(config('maxfactor-checkout.driver'))
+            ->needs('$content')
+            ->give(request()->route('uid'));
     }
 }
