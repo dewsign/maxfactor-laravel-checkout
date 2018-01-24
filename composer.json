@@ -1,7 +1,9 @@
 {
     "name": "maxfactor/checkout",
     "description": "'Maxfactor checkout'",
-    "require": {},
+    "require": {
+        "laravel/framework": "^5.5"
+    },
     "autoload": {
         "psr-4": {
             "Maxfactor\\Checkout\\": "src"
