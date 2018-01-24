@@ -30,9 +30,5 @@ class CheckoutServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/config/maxfactor-checkout.php', 'maxfactor-checkout');
 
         $this->app->bind('Maxfactor\Checkout\Contracts\Checkout', config('maxfactor-checkout.driver'));
-        // dd($this->app->make('router'));
-        $this->app->when(config('maxfactor-checkout.driver'))
-            ->needs('$content')
-            ->give(request()->route('uid'));
     }
 }
