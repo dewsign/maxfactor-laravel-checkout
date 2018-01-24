@@ -5,10 +5,8 @@ namespace Maxfactor\Checkout\Contracts;
 interface Checkout
 {
     /**
-     * This method is where you should either make an api call to a remote checkout store or call
-     * the local checkout store to return the checkout array.
-     *
-     * @return Array
+     * Within the construct, the `content` attribute must be populated with the data from the
+     * checkout store / handler. (e.g. remote api or local class)
      */
-    public function processContent();
+    public function __construct();
 }

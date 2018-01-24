@@ -29,8 +29,6 @@ class CheckoutController extends Controller
      */
     public function store(Checkout $checkout, $uid, $stage = 'default')
     {
-        // $checkout = new Checkout($uid, $request->all());
-
         $result = $checkout
             ->stage($stage, 'store')
             ->append('uid', $uid)
@@ -48,17 +46,9 @@ class CheckoutController extends Controller
      */
     public function show(Checkout $checkout, $uid, $stage = 'default')
     {
-        // TODO: validate data stored in cart / checkout
-        // $checkout = new Checkout(
-        //     $uid,
-        //     Session::get("checkout.{$uid}") ? Session::get("checkout.{$uid}")->toArray() : []
-        // );
-
-        // dd(CheckoutFacade::stage('foo'));
-
         return $checkout
-            ->stage($stage)
             ->append('uid', $uid)
+            ->stage($stage)
             ->render();
     }
 }
