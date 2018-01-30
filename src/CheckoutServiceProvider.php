@@ -76,5 +76,6 @@ class CheckoutServiceProvider extends ServiceProvider
     private function registerBindings()
     {
         $this->app->bind('Maxfactor\Checkout\Contracts\Checkout', config('maxfactor-checkout.driver'));
+        $this->app->bind('Maxfactor\Checkout\Contracts\Postage', config('maxfactor-checkout.postage'));
     }
 }
