@@ -18,14 +18,14 @@
 
     <section class="checkout">
         <form name="checkout-form">
-        @include('checkout.components.header')
+        @include('maxfactor::checkout.components.header')
         <div class="checkout__group">
             <div class="checkout__left">
                 <div class="checkout__left-content">
                     <div class="checkout__customer-info">
                         <h1>@lang('Customer information')</h1>
                         <span class="checkout__existing-customer" v-if="!isLoggedIn && canEditShipping">@lang('Already have an account?') 
-                            <v-login-modal></v-login-modal> or <v-register-modal></v-register-modal>
+                            Login or Logout
                         </span>
                         <span class="checkout__existing-customer" v-if="isLoggedIn && canEditShipping">@lang('You are logged in as') @{{ currentCheckout.shipping.firstname }} 
                             <v-button @click.prevent="emit('logout')">@lang('Logout')</v-button>
@@ -109,20 +109,20 @@
                             <v-form-error field="vat_number"></v-form-error>
                         </div>
                     </div>
-                    @component('checkout.components.actions')
+                    @component('maxfactor::checkout.components.actions')
                         @slot('continueLabel', __('Continue to shipping method'))
                         @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
                         @slot('returnLabel', __('Return to cart'))
                         @slot('returnUrl', route('cart.index'))
                     @endcomponent
-                    @include('checkout.components.legal')
+                    @include('maxfactor::checkout.components.legal')
                 </div>
             </div>
             <div class="checkout__right">
                 <div class="checkout__right-content">
-                    @include('checkout.components.items')
+                    @include('maxfactor::checkout.components.items')
                     <mx-cart-discount></mx-cart-discount>
-                    @include('checkout.components.summary', ['editable' => false])
+                    @include('maxfactor::checkout.components.summary', ['editable' => false])
                 </div>
             </div>
         </div>
