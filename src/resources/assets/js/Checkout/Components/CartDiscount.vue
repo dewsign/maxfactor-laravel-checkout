@@ -15,7 +15,7 @@
 </template>
 
 <script>
-    import FormMixin from '../Mixins/FormMixin'
+    import { FormMixin } from 'maxfactor-vue-support'
 
     export default {
         name: 'mx-cart-discount',
