@@ -3,11 +3,12 @@
 namespace Maxfactor\Checkout\Traits;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-use \App\Postage;
+use Maxfactor\Checkout\Contracts\Postage;
 
 trait HandlesCheckout
 {
@@ -110,7 +111,10 @@ trait HandlesCheckout
      */
     public function checkoutStageShowShipping()
     {
-        $postage = new Postage(null, Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray());
+        $postage = App::make(Postage::class, [
+            'content' => null,
+            'params' => Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray()
+        ]);
 
         // add postage rates to model response
         $this->append('postageOptions', $postage->raw());
@@ -143,6 +147,11 @@ trait HandlesCheckout
             'address_postcode' => 'required|string',
             'address_country' => 'required|string',
         ])->validate();
+    }
+
+    public function checkoutStageShowPayment()
+    {
+        return $this->append('stripePublishableKey', env('STRIPE_PUBLISHABLE_KEY') ? : '');
     }
 
     /**
