@@ -1,11 +1,20 @@
 {
     "name": "maxfactor/checkout",
     "description": "'Maxfactor checkout'",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco Mark",
+            "email": "marco.mark@dewsign.co.uk",
+            "homepage": "https://dewsign.co.uk"
+        }
+    ],
     "require": {
         "omnipay/paypal": "~2.0",
         "omnipay/stripe": "^2.4",
         "laravel/framework": "^5.5",
-        "maxfactor/support": "@dev"
+        "maxfactor/support": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -14,5 +23,12 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1"
+    },
+    "extra":{
+        "laravel": {
+            "providers": [
+                "Maxfactor\\Checkout\\CheckoutServiceProvider"
+            ]
+        }
     }
 }
