@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
 use Maxfactor\Checkout\Contracts\Checkout;
 
-use Spatie\GoogleTagManager\GoogleTagManagerFacade as GoogleTagManager;
-
 trait HandlesCheckout
 {
     /**
