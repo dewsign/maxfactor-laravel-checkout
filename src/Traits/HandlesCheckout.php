@@ -180,6 +180,9 @@ trait HandlesCheckout
     {
         $this->syncSession();
 
+        $provider = isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : 'stripe';
+
         if (Request::get('checkout')['payment']['provider'] != 'paypal') {
             Validator::make(Request::get('checkout')['billing'], [
                 'nameoncard' => 'required|string',
