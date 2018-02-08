@@ -2,13 +2,19 @@
 
 namespace Maxfactor\Checkout\Traits;
 
+use Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
+use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
+use Maxfactor\Checkout\Handlers\Payment;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
+use Maxfactor\Checkout\Contracts\Checkout;
+
+use Spatie\GoogleTagManager\GoogleTagManagerFacade as GoogleTagManager;
 
 trait HandlesCheckout
 {
@@ -227,6 +233,7 @@ trait HandlesCheckout
             $token = Request::get('checkout')['payment']['token']['id'];
             $amount = floatval($this->getFirst('finalTotal'));
             $orderReference = $this->getFirst('orderID');
+            Log::info($amount);
 
             $paymentResponse = (new Payment())
                 ->token($token)
@@ -241,9 +248,12 @@ trait HandlesCheckout
         /**
          * Send the payment response to the Api for processing
          */
-        new Checkout($this->getFirst('uid'), [
-            'checkout' => collect(Request::get('checkout'))->toArray(),
-            'paymentResponse' => $paymentResponse->getData()
+        $newCheckout = App::make(Checkout::class, [
+            'uid' => $this->getFirst('uid'),
+            'params' => [
+                'checkout' => collect(Request::get('checkout'))->toArray(),
+                'paymentResponse' => $paymentResponse->getData(),
+            ]
         ]);
 
         return $this;
@@ -371,13 +381,13 @@ trait HandlesCheckout
             ]);
         });
 
-        GoogleTagManager::set([
-            'transactionId' => $this->getFirst('orderID'),
-            'transactionAffiliation' => __('Skinflint'),
-            'transactionTotal' => floatval($this->getFirst('finalTotal')),
-            'transactionTax' => floatval($this->getFirst('incTaxTotal') - $this->getFirst('exTaxTotal')),
-            'transactionShipping' => floatval($this->getFirst('postageTotal')),
-            'transactionProducts' => $productsOrdered,
-        ]);
+        // GoogleTagManager::set([
+        //     'transactionId' => $this->getFirst('orderID'),
+        //     'transactionAffiliation' => __('Skinflint'),
+        //     'transactionTotal' => floatval($this->getFirst('finalTotal')),
+        //     'transactionTax' => floatval($this->getFirst('incTaxTotal') - $this->getFirst('exTaxTotal')),
+        //     'transactionShipping' => floatval($this->getFirst('postageTotal')),
+        //     'transactionProducts' => $productsOrdered,
+        // ]);
     }
 }
