@@ -183,7 +183,7 @@ trait HandlesCheckout
         $provider = isset(Request::get('checkout')['payment']['provider']) ?
             Request::get('checkout')['payment']['provider'] : 'stripe';
 
-        if (Request::get('checkout')['payment']['provider'] != 'paypal') {
+        if ($provider == 'stripe') {
             Validator::make(Request::get('checkout')['billing'], [
                 'nameoncard' => 'required|string',
             ])->validate();
@@ -214,7 +214,7 @@ trait HandlesCheckout
             ])->validate();
         }
 
-        if (Request::get('checkout')['payment']['provider'] == 'paypal') {
+        if ($provider == 'paypal') {
             $paypal = (new Paypal());
 
             $paymentResponse = $paypal->complete([
