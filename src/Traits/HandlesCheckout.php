@@ -54,23 +54,20 @@ trait HandlesCheckout
         $this->template($stage);
         $this->append('stage', $stage);
 
-        // Only run if custom checkout
-        if (count($this->get('items')) > 0) {
-            Session::put('js_vars', collect([
-                'uid' => $uid,
-                "checkout.{$uid}" => $this->get('items'),
-                "checkout.shipping.{$uid}" => $this->get('shipping'),
-                "checkout.billing.{$uid}" => $this->get('billing'),
-                "checkout.user.{$uid}" => $this->get('user'),
-                "stage.{$uid}" => $this->getFirst('stage'),
-            ])->filter(function ($value, $key) {
-                if ($value instanceof Collection) {
-                    return $value->count();
-                }
+        Session::put('js_vars', collect([
+            'uid' => $uid,
+            "checkout.{$uid}" => $this->get('items'),
+            "checkout.shipping.{$uid}" => $this->get('shipping'),
+            "checkout.billing.{$uid}" => $this->get('billing'),
+            "checkout.user.{$uid}" => $this->get('user'),
+            "stage.{$uid}" => $this->getFirst('stage'),
+        ])->filter(function ($value, $key) {
+            if ($value instanceof Collection) {
+                return $value->count();
+            }
 
-                return $value !== "";
-            })->all());
-        }
+            return $value !== "";
+        })->all());
 
         Session::put('checkoutUID', $this->getCurrentCheckoutId());
 
