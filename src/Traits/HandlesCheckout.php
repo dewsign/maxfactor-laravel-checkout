@@ -228,7 +228,6 @@ trait HandlesCheckout
             $token = Request::get('checkout')['payment']['token']['id'];
             $amount = floatval($this->getFirst('finalTotal'));
             $orderReference = $this->getFirst('orderID');
-            Log::info($amount);
 
             $paymentResponse = (new Payment())
                 ->token($token)
