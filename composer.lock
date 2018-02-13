@@ -374,18 +374,6 @@
         },
         {
             "name": "laravel/framework",
-<<<<<<< HEAD
-            "version": "v5.5.34",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "1de7c0aec13eadbdddc2d1ba4019b064b2c6b966"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/1de7c0aec13eadbdddc2d1ba4019b064b2c6b966",
-                "reference": "1de7c0aec13eadbdddc2d1ba4019b064b2c6b966",
-=======
             "version": "v5.5.33",
             "source": {
                 "type": "git",
@@ -396,7 +384,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/ef7880e665390f999f4def7c9f78133636f973cf",
                 "reference": "ef7880e665390f999f4def7c9f78133636f973cf",
->>>>>>> master
                 "shasum": ""
             },
             "require": {
@@ -517,11 +504,7 @@
                 "framework",
                 "laravel"
             ],
-<<<<<<< HEAD
-            "time": "2018-02-06T15:36:55+00:00"
-=======
             "time": "2018-01-30T15:06:13+00:00"
->>>>>>> master
         },
         {
             "name": "league/flysystem",
@@ -613,30 +596,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dewsign/maxfactor-laravel-support.git",
-<<<<<<< HEAD
-                "reference": "5a376e4648bddd8f8422f0439235ed24137ce232"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dewsign/maxfactor-laravel-support/zipball/5a376e4648bddd8f8422f0439235ed24137ce232",
-                "reference": "5a376e4648bddd8f8422f0439235ed24137ce232",
-=======
                 "reference": "8d6d5e7fa3d754098a354fe84ec598d4e9bff51f"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/dewsign/maxfactor-laravel-support/zipball/8d6d5e7fa3d754098a354fe84ec598d4e9bff51f",
                 "reference": "8d6d5e7fa3d754098a354fe84ec598d4e9bff51f",
->>>>>>> master
                 "shasum": ""
             },
             "require": {
                 "dannyvankooten/vat.php": "^1.1",
-<<<<<<< HEAD
-                "laravel/framework": "^5.3",
-=======
                 "laravel/framework": "^5.5",
->>>>>>> master
                 "symfony/intl": "^4.0"
             },
             "require-dev": {
@@ -671,11 +641,7 @@
                 }
             ],
             "description": "Support and helpers for Laravel PHP based projects",
-<<<<<<< HEAD
-            "time": "2018-02-01T08:39:09+00:00"
-=======
             "time": "2018-01-31T11:11:39+00:00"
->>>>>>> master
         },
         {
             "name": "monolog/monolog",
