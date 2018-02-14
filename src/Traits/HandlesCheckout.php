@@ -2,7 +2,6 @@
 
 namespace Maxfactor\Checkout\Traits;
 
-use Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -238,7 +237,6 @@ trait HandlesCheckout
             Session::put('paymentResponse', collect($paymentResponse->getData()));
             $this->append('paymentResponse', collect($paymentResponse->getData()));
         }
-
         /**
          * Send the payment response to the Api for processing
          */

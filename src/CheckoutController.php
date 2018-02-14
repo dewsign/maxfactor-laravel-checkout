@@ -33,14 +33,16 @@ class CheckoutController extends Controller
     {
         $checkout = App::make(Checkout::class, [
             'uid' => $uid,
-            'params' => $request->get('checkout'),
+            'params' => [
+                'checkout' => $request->get('checkout'),
+            ]
         ]);
 
         $result = $checkout
             ->stage($stage, 'store')
             ->append('uid', $uid)
             ->raw();
-
+            
         return $result;
     }
 
@@ -55,7 +57,9 @@ class CheckoutController extends Controller
     {
         $checkout = App::make(Checkout::class, [
             'uid' => $uid,
-            'params' => Session::get("checkout.{$uid}") ? Session::get("checkout.{$uid}")->toArray() : [],
+            'params' => [
+                'checkout' => Session::get("checkout.{$uid}") ? Session::get("checkout.{$uid}")->toArray() : [],
+            ]
         ]);
 
         return $checkout
