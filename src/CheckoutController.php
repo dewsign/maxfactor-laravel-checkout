@@ -2,10 +2,10 @@
 
 namespace Maxfactor\Checkout;
 
-use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 use Maxfactor\Checkout\Contracts\Checkout;
 
 class CheckoutController extends Controller
@@ -42,7 +42,7 @@ class CheckoutController extends Controller
             ->stage($stage, 'store')
             ->append('uid', $uid)
             ->raw();
-            
+
         return $result;
     }
 
