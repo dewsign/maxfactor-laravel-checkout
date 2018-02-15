@@ -2,10 +2,7 @@
 
 namespace Maxfactor\Checkout;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
 use Maxfactor\Checkout\Contracts\Checkout;
 
 class CheckoutController extends Controller
@@ -29,15 +26,8 @@ class CheckoutController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $uid, $stage = 'default')
+    public function store(Checkout $checkout, $uid, $stage = 'default')
     {
-        $checkout = App::make(Checkout::class, [
-            'content' => $uid,
-            'params' => [
-                'checkout' => $request->get('checkout'),
-            ]
-        ]);
-
         $result = $checkout
             ->stage($stage, 'store')
             ->append('uid', $uid)
@@ -53,16 +43,8 @@ class CheckoutController extends Controller
      * @param  string $stage
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $uid, $stage = 'default')
+    public function show(Checkout $checkout, $uid, $stage = 'default')
     {
-        $checkout = App::make(Checkout::class, [
-            'content' => $uid,
-            'params' => [
-                Session::get("checkout.{$uid}") ?
-                    Session::get("checkout.{$uid}")->toArray() : [],
-            ]
-        ]);
-
         return $checkout
             ->append('uid', $uid)
             ->stage($stage)

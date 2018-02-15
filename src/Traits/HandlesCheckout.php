@@ -25,6 +25,8 @@ trait HandlesCheckout
         'unitPrice' => 'price',
     ];
 
+    protected $uid;
+
     /**
      * Get the current checkout id from the route object
      *
@@ -33,6 +35,20 @@ trait HandlesCheckout
     public function getCurrentCheckoutId()
     {
         return request()->route('uid') ? : '';
+    }
+
+    /**
+     * Retrieve the checkout parameters from the Request or Session if available
+     *
+     * @return array
+     */
+    public function getCurrentCheckoutParams()
+    {
+        $uid = $this->getCurrentCheckoutId();
+
+        return Request::has('uid')
+            ? Request::all()
+            : optional(Session::get("checkout.{$uid}"))->toArray() ? : [];
     }
 
     /**
