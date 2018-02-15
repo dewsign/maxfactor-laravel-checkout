@@ -32,7 +32,7 @@ class CheckoutController extends Controller
     public function store(Request $request, $uid, $stage = 'default')
     {
         $checkout = App::make(Checkout::class, [
-            'uid' => $uid,
+            'content' => $uid,
             'params' => [
                 'checkout' => $request->get('checkout'),
             ]
@@ -56,9 +56,10 @@ class CheckoutController extends Controller
     public function show(Request $request, $uid, $stage = 'default')
     {
         $checkout = App::make(Checkout::class, [
-            'uid' => $uid,
+            'content' => $uid,
             'params' => [
-                'checkout' => Session::get("checkout.{$uid}") ? Session::get("checkout.{$uid}")->toArray() : [],
+                Session::get("checkout.{$uid}") ?
+                    Session::get("checkout.{$uid}")->toArray() : [],
             ]
         ]);
 
