@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Maxfactor\Checkout\Handlers\Payment;
+use Maxfactor\Checkout\Handlers\Stripe;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
 use Maxfactor\Checkout\Contracts\Checkout;
@@ -195,43 +195,10 @@ trait HandlesCheckout
     {
         $this->syncSession();
 
-        $provider = isset(Request::get('checkout')['payment']['provider']) ?
-            Request::get('checkout')['payment']['provider'] : 'stripe';
+        $provider = $this->getProvider();
 
-        if ($this->getFirst('finalTotal') == 0) {
-            $provider = 'free';
-        }
-
-        if ($provider == 'stripe') {
-            Validator::make(Request::get('checkout')['billing'], [
-                'nameoncard' => 'required|string',
-            ])->validate();
-
-            Validator::make(Request::get('checkout')['payment']['token'], [
-                'id' => 'required|string',
-                'object' => 'required|string',
-                'type' => 'required|string',
-            ])->validate();
-        }
-
-        Validator::make(Request::get('checkout')['user'], [
-            'terms' => 'required|accepted',
-        ])->validate();
-
-        if (Request::get('checkout')['useShipping'] === false) {
-            Validator::make(Request::get('checkout')['billing'], [
-                'firstname' => 'required|string',
-                'surname' => 'required|string',
-                'company' => 'nullable|string',
-                'address' => 'required|string',
-                'address_2' => 'nullable|string',
-                'address_3' => 'nullable|string',
-                'address_city' => 'required|string',
-                'address_county' => 'required|string',
-                'address_postcode' => 'required|string',
-                'address_country' => 'required|string',
-            ])->validate();
-        }
+        // Call relevant validation form request based on $provider
+        app(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
 
         if ($provider == 'paypal') {
             $paypal = (new Paypal());
@@ -254,7 +221,7 @@ trait HandlesCheckout
             $amount = floatval($this->getFirst('finalTotal'));
             $orderReference = $this->getFirst('orderID');
 
-            $paymentResponse = (new Payment())
+            $paymentResponse = (new Stripe())
                 ->token($token)
                 ->amount($amount)
                 ->reference($orderReference)
@@ -409,5 +376,20 @@ trait HandlesCheckout
         //     'transactionShipping' => floatval($this->getFirst('postageTotal')),
         //     'transactionProducts' => $productsOrdered,
         // ]);
+    }
+
+    /**
+     * Get payment provider for checkout
+     *
+     * @return void
+     */
+    private function getProvider()
+    {
+        if ($this->getFirst('finalTotal') == 0) {
+            return 'free';
+        }
+
+        return isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : 'stripe';
     }
 }

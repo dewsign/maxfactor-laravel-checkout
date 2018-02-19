@@ -45,7 +45,7 @@
                     </div>
                     <div class="checkout__terms">
                         <label><input type="checkbox" v-model="currentCheckout.user.terms">@lang('Please check the box to agree to our') <a href="/pages/legal/terms-conditions-summary" target="_blank">terms &amp; conditions</a></label>
-                        <v-form-error field="terms"></v-form-error>
+                        <v-form-error field="checkout.user.terms"></v-form-error>
                     </div>
 
                     <template v-if="currentCheckout.payment.provider == 'free'">
