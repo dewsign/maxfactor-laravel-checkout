@@ -127,13 +127,30 @@ trait HandlesCheckout
      */
     public function checkoutStageShowShipping()
     {
-        $postage = App::make(Postage::class, [
-            'content' => null,
-            'params' => Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray()
-        ]);
+        $provider = isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : 'stripe';
 
-        // add postage rates to model response
-        $this->append('postageOptions', $postage->raw());
+        $provider = $this->getFirst('finalTotal') == 0 ? 'free' : $provider;
+
+        if ($provider !== 'free') {
+            $postage = App::make(Postage::class, [
+                'content' => null,
+                'params' => Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray()
+            ]);
+
+            $this->append('postageOptions', $postage->raw());
+        } else {
+            $postage = [
+                'id' => 1001,
+                'name' => 'Free order',
+                'date' => 0,
+                'price' => 0,
+                'taxRate' => 0,
+                'poa' => false,
+            ];
+
+            $this->append('postageOptions', collect([$postage]));
+        }
     }
 
     /**
