@@ -199,6 +199,10 @@ trait HandlesCheckout
         $provider = isset(Request::get('checkout')['payment']['provider']) ?
             Request::get('checkout')['payment']['provider'] : 'stripe';
 
+        if ($this->getFirst('finalTotal') == 0) {
+            $provider = 'free';
+        }
+
         if ($provider == 'stripe') {
             Validator::make(Request::get('checkout')['billing'], [
                 'nameoncard' => 'required|string',
@@ -239,6 +243,13 @@ trait HandlesCheckout
                 'payerid' => Session::get("checkout.{$this->uid}.stripe.payerid"),
                 'currency' => 'GBP',
             ])->send();
+
+            $paymentResponseData = $paymentResponse->getData();
+        } elseif ($provider == 'free') {
+            $paymentResponseData = [
+                'freeorder' => 'success',
+                'reference' => $this->getFirst('orderID'),
+            ];
         } else {
             $token = Request::get('checkout')['payment']['token']['id'];
             $amount = floatval($this->getFirst('finalTotal'));
@@ -250,8 +261,10 @@ trait HandlesCheckout
                 ->reference($orderReference)
                 ->charge();
 
-            Session::put('paymentResponse', collect($paymentResponse->getData()));
-            $this->append('paymentResponse', collect($paymentResponse->getData()));
+            $paymentResponseData = $paymentResponse->getData();
+
+            Session::put('paymentResponse', collect($paymentResponseData));
+            $this->append('paymentResponse', collect($paymentResponseData));
         }
         /**
          * Send the payment response to the Api for processing
@@ -260,7 +273,7 @@ trait HandlesCheckout
             'uid' => $this->getFirst('uid'),
             'params' => [
                 'checkout' => collect(Request::get('checkout'))->toArray(),
-                'paymentResponse' => $paymentResponse->getData(),
+                'paymentResponse' => $paymentResponseData,
             ]
         ]);
 

@@ -28,6 +28,9 @@
                         <template v-if="currentCheckout.payment.provider == 'paypal'">
                             <label>Paying with PayPal Express</label>
                         </template>
+                        <template v-else-if="currentCheckout.payment.provider == 'free'">
+                            <label>Free Order</label>
+                        </template>
                         <template v-else>
                             <mx-stripe class="user__field"
                                 publishableKey="{{ $stripePublishableKey }}"
@@ -44,7 +47,31 @@
                         <label><input type="checkbox" v-model="currentCheckout.user.terms">@lang('Please check the box to agree to our') <a href="/pages/legal/terms-conditions-summary" target="_blank">terms &amp; conditions</a></label>
                         <v-form-error field="terms"></v-form-error>
                     </div>
-                    <template v-if="currentCheckout.payment.provider != 'paypal'">
+
+                    <template v-if="currentCheckout.payment.provider == 'free'">
+                        @component('maxfactor::checkout.components.actions')
+                            @slot('continueLabel', __('Place free order'))
+                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
+                            @slot('returnLabel', __('Return to shipping'))
+                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
+                            @slot('onClick', 'processCheckout')
+                        @endcomponent
+                    </template>
+                    <template v-else-if="currentCheckout.payment.provider == 'paypal'">
+                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
+                            <h3>@lang('Billing address')</h3>
+                            <label>Provided by PayPal</label>
+                        </div>
+
+                        @component('maxfactor::checkout.components.actions')
+                            @slot('continueLabel', __('Place order'))
+                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
+                            @slot('returnLabel', __('Return to shipping'))
+                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
+                            @slot('onClick', 'processCheckout')
+                        @endcomponent
+                    </template>
+                    <template v-else>
                         <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
                             <h3>@lang('Billing address')</h3>
                             <div class="checkout__shipping-option">
@@ -121,21 +148,7 @@
                             @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
                             @slot('returnLabel', __('Return to shipping'))
                             @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
-                            @slot('onClick', 'processCheckout')
-                        @endcomponent
-                    </template>
-                    <template v-else>
-                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
-                            <h3>@lang('Billing address')</h3>
-                            <label>Provided by PayPal</label>
-                        </div>
-
-                        @component('maxfactor::checkout.components.actions')
-                            @slot('continueLabel', __('Place order'))
-                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
-                            @slot('returnLabel', __('Return to shipping'))
-                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
-                            @slot('onClick', 'processPaypalCheckout')
+                            @slot('onClick', 'processStripeCheckout')
                         @endcomponent
                     </template>
                     <v-form-error field="message"></v-form-error>
