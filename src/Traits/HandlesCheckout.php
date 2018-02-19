@@ -389,13 +389,13 @@ trait HandlesCheckout
             ]);
         });
 
-        // GoogleTagManager::set([
-        //     'transactionId' => $this->getFirst('orderID'),
-        //     'transactionAffiliation' => __('Skinflint'),
-        //     'transactionTotal' => floatval($this->getFirst('finalTotal')),
-        //     'transactionTax' => floatval($this->getFirst('incTaxTotal') - $this->getFirst('exTaxTotal')),
-        //     'transactionShipping' => floatval($this->getFirst('postageTotal')),
-        //     'transactionProducts' => $productsOrdered,
-        // ]);
+        return [
+            'transactionId' => $this->getFirst('orderID'),
+            'transactionAffiliation' => config('app.name'),
+            'transactionTotal' => floatval($this->getFirst('finalTotal')),
+            'transactionTax' => floatval($this->getFirst('incTaxTotal') - $this->getFirst('exTaxTotal')),
+            'transactionShipping' => floatval($this->getFirst('postageTotal')),
+            'transactionProducts' => $productsOrdered,
+        ];
     }
 }
