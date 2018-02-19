@@ -183,6 +183,10 @@ trait HandlesCheckout
         Validator::make(Request::get('checkout')['shippingMethod'], [
             'id' => 'required|integer|min:1',
         ])->validate();
+
+        if (App::environment(['local', 'staging', 'testing'])) {
+            Session::put('dusk_vars', ['finalTotal' => floatval($this->getFirst('finalTotal'))]);
+        }
     }
 
     /**
