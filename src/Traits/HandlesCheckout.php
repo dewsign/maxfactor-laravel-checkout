@@ -197,7 +197,7 @@ trait HandlesCheckout
         $provider = $this->getProvider();
 
         // Call relevant validation form request based on $provider
-        app(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
+        App::make(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
 
         // Pass to payment handler for processing payment
         $paymentResponseData = (new PaymentWrapper($provider))
