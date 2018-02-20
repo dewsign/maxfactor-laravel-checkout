@@ -49,27 +49,16 @@
                     </div>
 
                     <template v-if="currentCheckout.payment.provider == 'free'">
-                        @component('maxfactor::checkout.components.actions')
-                            @slot('continueLabel', __('Place free order'))
-                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
-                            @slot('returnLabel', __('Return to shipping'))
-                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
-                            @slot('onClick', 'processCheckout')
-                        @endcomponent
+                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
+                            <h3>@lang('Billing address')</h3>
+                            <label>Free Order</label>
+                        </div>
                     </template>
                     <template v-else-if="currentCheckout.payment.provider == 'paypal'">
                         <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
                             <h3>@lang('Billing address')</h3>
                             <label>Provided by PayPal</label>
                         </div>
-
-                        @component('maxfactor::checkout.components.actions')
-                            @slot('continueLabel', __('Place order'))
-                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
-                            @slot('returnLabel', __('Return to shipping'))
-                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
-                            @slot('onClick', 'processCheckout')
-                        @endcomponent
                     </template>
                     <template v-else>
                         <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
@@ -142,15 +131,16 @@
                                 <v-form-error field="address_country"></v-form-error>
                             </div>
                         </div>
-
-                        @component('maxfactor::checkout.components.actions')
-                            @slot('continueLabel', __('Place order'))
-                            @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
-                            @slot('returnLabel', __('Return to shipping'))
-                            @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
-                            @slot('onClick', 'processStripeCheckout')
-                        @endcomponent
                     </template>
+
+                    @component('maxfactor::checkout.components.actions')
+                        @slot('continueLabel', __('Place order'))
+                        @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
+                        @slot('returnLabel', __('Return to shipping'))
+                        @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
+                        @slot('onClick', 'processCheckout')
+                    @endcomponent
+
                     <v-form-error field="message"></v-form-error>
                     @include('maxfactor::checkout.components.legal')
                 </div>
