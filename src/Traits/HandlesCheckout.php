@@ -5,13 +5,12 @@ namespace Maxfactor\Checkout\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Maxfactor\Checkout\Handlers\Stripe;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
 use Maxfactor\Checkout\Contracts\Checkout;
+use Maxfactor\Checkout\Handlers\PaymentWrapper;
 
 trait HandlesCheckout
 {
@@ -200,41 +199,17 @@ trait HandlesCheckout
         // Call relevant validation form request based on $provider
         app(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
 
-        if ($provider == 'paypal') {
-            $paypal = (new Paypal());
+        // Pass to payment handler for processing payment
+        $paymentResponseData = (new PaymentWrapper($provider))
+            ->setAmount($this->getFirst('finalTotal'))
+            ->setOrderID($this->getFirst('orderID'))
+            ->setUid($this->uid)
+            ->process();
 
-            $paymentResponse = $paypal->complete([
-                'amount' => $paypal->formatAmount($this->getFirst('finalTotal')),
-                'token' => Session::get("checkout.{$this->uid}.stripe.token"),
-                'payerid' => Session::get("checkout.{$this->uid}.stripe.payerid"),
-                'currency' => 'GBP',
-            ])->send();
+        Session::put('paymentResponse', collect($paymentResponseData));
+        $this->append('paymentResponse', collect($paymentResponseData));
 
-            $paymentResponseData = $paymentResponse->getData();
-        } elseif ($provider == 'free') {
-            $paymentResponseData = [
-                'freeorder' => 'success',
-                'reference' => $this->getFirst('orderID'),
-            ];
-        } else {
-            $token = Request::get('checkout')['payment']['token']['id'];
-            $amount = floatval($this->getFirst('finalTotal'));
-            $orderReference = $this->getFirst('orderID');
-
-            $paymentResponse = (new Stripe())
-                ->token($token)
-                ->amount($amount)
-                ->reference($orderReference)
-                ->charge();
-
-            $paymentResponseData = $paymentResponse->getData();
-
-            Session::put('paymentResponse', collect($paymentResponseData));
-            $this->append('paymentResponse', collect($paymentResponseData));
-        }
-        /**
-         * Send the payment response to the Api for processing
-         */
+        // Send the payment response to the Api for processing
         $newCheckout = App::make(Checkout::class, [
             'uid' => $this->getFirst('uid'),
             'params' => [
