@@ -5,13 +5,12 @@ namespace Maxfactor\Checkout\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Maxfactor\Checkout\Handlers\Payment;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
 use Maxfactor\Checkout\Contracts\Checkout;
+use Maxfactor\Checkout\Handlers\PaymentWrapper;
 
 trait HandlesCheckout
 {
@@ -132,7 +131,6 @@ trait HandlesCheckout
             'params' => Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray()
         ]);
 
-        // add postage rates to model response
         $this->append('postageOptions', $postage->raw());
     }
 
@@ -200,71 +198,24 @@ trait HandlesCheckout
     {
         $this->syncSession();
 
-        $provider = isset(Request::get('checkout')['payment']['provider']) ?
-            Request::get('checkout')['payment']['provider'] : 'stripe';
+        $provider = $this->getProvider();
 
-        if ($provider == 'stripe') {
-            Validator::make(Request::get('checkout')['billing'], [
-                'nameoncard' => 'required|string',
-            ])->validate();
+        // Call relevant validation form request based on $provider
+        App::make(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
 
-            Validator::make(Request::get('checkout')['payment']['token'], [
-                'id' => 'required|string',
-                'object' => 'required|string',
-                'type' => 'required|string',
-            ])->validate();
-        }
+        // Pass to payment handler for processing payment
+        $paymentResponseData = (new PaymentWrapper($provider))
+            ->setAmount($this->getFirst('finalTotal'))
+            ->setOrderID($this->getFirst('orderID'))
+            ->setUid($this->uid)
+            ->process();
 
-        Validator::make(Request::get('checkout')['user'], [
-            'terms' => 'required|accepted',
-        ])->validate();
-
-        if (Request::get('checkout')['useShipping'] === false) {
-            Validator::make(Request::get('checkout')['billing'], [
-                'firstname' => 'required|string',
-                'surname' => 'required|string',
-                'company' => 'nullable|string',
-                'address' => 'required|string',
-                'address_2' => 'nullable|string',
-                'address_3' => 'nullable|string',
-                'address_city' => 'required|string',
-                'address_county' => 'required|string',
-                'address_postcode' => 'required|string',
-                'address_country' => 'required|string',
-            ])->validate();
-        }
-
-        if ($provider == 'paypal') {
-            $paypal = (new Paypal());
-
-            $paymentResponse = $paypal->complete([
-                'amount' => $paypal->formatAmount($this->getFirst('finalTotal')),
-                'token' => Session::get("checkout.{$this->uid}.stripe.token"),
-                'payerid' => Session::get("checkout.{$this->uid}.stripe.payerid"),
-                'currency' => 'GBP',
-            ])->send();
-        } else {
-            $token = Request::get('checkout')['payment']['token']['id'];
-            $amount = floatval($this->getFirst('finalTotal'));
-            $orderReference = $this->getFirst('orderID');
-
-            $paymentResponse = (new Payment())
-                ->token($token)
-                ->amount($amount)
-                ->reference($orderReference)
-                ->charge();
-
-            Session::put('paymentResponse', collect($paymentResponse->getData()));
-            $this->append('paymentResponse', collect($paymentResponse->getData()));
-        }
-        /**
-         * Send the payment response to the Api for processing
-         */
+        // Send the payment response to the Api for processing
         $newCheckout = App::make(Checkout::class, [
             'uid' => $this->getFirst('uid'),
             'params' => [
                 'checkout' => collect(Request::get('checkout'))->toArray(),
-                'paymentResponse' => $paymentResponse->getData(),
+                'paymentResponse' => $paymentResponseData,
             ]
         ]);
 
@@ -401,5 +352,20 @@ trait HandlesCheckout
             'transactionShipping' => floatval($this->getFirst('postageTotal')),
             'transactionProducts' => $productsOrdered,
         ];
+    }
+
+    /**
+     * Get payment provider for checkout
+     *
+     * @return void
+     */
+    private function getProvider()
+    {
+        if ($this->getFirst('finalTotal') == 0) {
+            return 'free';
+        }
+
+        return isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : 'stripe';
     }
 }
