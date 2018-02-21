@@ -5,10 +5,12 @@ namespace Maxfactor\Checkout\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
+use Maxfactor\Checkout\Contracts\Checkout;
+use Maxfactor\Checkout\Handlers\PaymentWrapper;
 
 trait HandlesCheckout
 {
@@ -22,6 +24,8 @@ trait HandlesCheckout
         'unitPrice' => 'price',
     ];
 
+    protected $uid;
+
     /**
      * Get the current checkout id from the route object
      *
@@ -30,6 +34,20 @@ trait HandlesCheckout
     public function getCurrentCheckoutId()
     {
         return request()->route('uid') ? : '';
+    }
+
+    /**
+     * Retrieve the checkout parameters from the Request or Session if available
+     *
+     * @return array
+     */
+    public function getCurrentCheckoutParams()
+    {
+        $uid = $this->getCurrentCheckoutId();
+
+        return Request::has('uid')
+            ? Request::all()
+            : optional(Session::get("checkout.{$uid}"))->toArray() ? : [];
     }
 
     /**
@@ -50,23 +68,20 @@ trait HandlesCheckout
         $this->template($stage);
         $this->append('stage', $stage);
 
-        // Only run if custom checkout
-        if (count($this->get('items')) > 0) {
-            Session::put('js_vars', collect([
-                'uid' => $uid,
-                "checkout.{$uid}" => $this->get('items'),
-                "checkout.shipping.{$uid}" => $this->get('shipping'),
-                "checkout.billing.{$uid}" => $this->get('billing'),
-                "checkout.user.{$uid}" => $this->get('user'),
-                "stage.{$uid}" => $this->getFirst('stage'),
-            ])->filter(function ($value, $key) {
-                if ($value instanceof Collection) {
-                    return $value->count();
-                }
+        Session::put('js_vars', collect([
+            'uid' => $uid,
+            "checkout.{$uid}" => $this->get('items'),
+            "checkout.shipping.{$uid}" => $this->get('shipping'),
+            "checkout.billing.{$uid}" => $this->get('billing'),
+            "checkout.user.{$uid}" => $this->get('user'),
+            "stage.{$uid}" => $this->getFirst('stage'),
+        ])->filter(function ($value, $key) {
+            if ($value instanceof Collection) {
+                return $value->count();
+            }
 
-                return $value !== "";
-            })->all());
-        }
+            return $value !== "";
+        })->all());
 
         Session::put('checkoutUID', $this->getCurrentCheckoutId());
 
@@ -116,7 +131,6 @@ trait HandlesCheckout
             'params' => Session::get("checkout.{$this->uid}", collect(['checkout' => []]))->toArray()
         ]);
 
-        // add postage rates to model response
         $this->append('postageOptions', $postage->raw());
     }
 
@@ -167,6 +181,10 @@ trait HandlesCheckout
         Validator::make(Request::get('checkout')['shippingMethod'], [
             'id' => 'required|integer|min:1',
         ])->validate();
+
+        if (App::environment(['local', 'staging', 'testing'])) {
+            Session::put('dusk_vars', ['finalTotal' => floatval($this->getFirst('finalTotal'))]);
+        }
     }
 
     /**
@@ -180,67 +198,25 @@ trait HandlesCheckout
     {
         $this->syncSession();
 
-        if (Request::get('checkout')['payment']['provider'] != 'paypal') {
-            Validator::make(Request::get('checkout')['billing'], [
-                'nameoncard' => 'required|string',
-            ])->validate();
+        $provider = $this->getProvider();
 
-            Validator::make(Request::get('checkout')['payment']['token'], [
-                'id' => 'required|string',
-                'object' => 'required|string',
-                'type' => 'required|string',
-            ])->validate();
-        }
+        // Call relevant validation form request based on $provider
+        App::make(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
 
-        Validator::make(Request::get('checkout')['user'], [
-            'terms' => 'required|accepted',
-        ])->validate();
+        // Pass to payment handler for processing payment
+        $paymentResponseData = (new PaymentWrapper($provider))
+            ->setAmount($this->getFirst('finalTotal'))
+            ->setOrderID($this->getFirst('orderID'))
+            ->setUid($this->uid)
+            ->process();
 
-        if (Request::get('checkout')['useShipping'] === false) {
-            Validator::make(Request::get('checkout')['billing'], [
-                'firstname' => 'required|string',
-                'surname' => 'required|string',
-                'company' => 'nullable|string',
-                'address' => 'required|string',
-                'address_2' => 'nullable|string',
-                'address_3' => 'nullable|string',
-                'address_city' => 'required|string',
-                'address_county' => 'required|string',
-                'address_postcode' => 'required|string',
-                'address_country' => 'required|string',
-            ])->validate();
-        }
-
-        if (Request::get('checkout')['payment']['provider'] == 'paypal') {
-            $paypal = (new Paypal());
-
-            $paymentResponse = $paypal->complete([
-                'amount' => $paypal->formatAmount($this->getFirst('finalTotal')),
-                'token' => Session::get("checkout.{$this->uid}.stripe.token"),
-                'payerid' => Session::get("checkout.{$this->uid}.stripe.payerid"),
-                'currency' => 'GBP',
-            ])->send();
-        } else {
-            $token = Request::get('checkout')['payment']['token']['id'];
-            $amount = floatval($this->getFirst('finalTotal'));
-            $orderReference = $this->getFirst('orderID');
-
-            $paymentResponse = (new Payment())
-                ->token($token)
-                ->amount($amount)
-                ->reference($orderReference)
-                ->charge();
-
-            Session::put('paymentResponse', collect($paymentResponse->getData()));
-            $this->append('paymentResponse', collect($paymentResponse->getData()));
-        }
-
-        /**
-         * Send the payment response to the Api for processing
-         */
-        new Checkout($this->getFirst('uid'), [
-            'checkout' => collect(Request::get('checkout'))->toArray(),
-            'paymentResponse' => $paymentResponse->getData()
+        // Send the payment response to the Api for processing
+        $newCheckout = App::make(Checkout::class, [
+            'uid' => $this->getFirst('uid'),
+            'params' => [
+                'checkout' => collect(Request::get('checkout'))->toArray(),
+                'paymentResponse' => $paymentResponseData,
+            ]
         ]);
 
         return $this;
@@ -368,13 +344,28 @@ trait HandlesCheckout
             ]);
         });
 
-        GoogleTagManager::set([
+        return [
             'transactionId' => $this->getFirst('orderID'),
-            'transactionAffiliation' => __('Skinflint'),
+            'transactionAffiliation' => config('app.name'),
             'transactionTotal' => floatval($this->getFirst('finalTotal')),
             'transactionTax' => floatval($this->getFirst('incTaxTotal') - $this->getFirst('exTaxTotal')),
             'transactionShipping' => floatval($this->getFirst('postageTotal')),
             'transactionProducts' => $productsOrdered,
-        ]);
+        ];
+    }
+
+    /**
+     * Get payment provider for checkout
+     *
+     * @return void
+     */
+    private function getProvider()
+    {
+        if ($this->getFirst('finalTotal') == 0) {
+            return 'free';
+        }
+
+        return isset(Request::get('checkout')['payment']['provider']) ?
+            Request::get('checkout')['payment']['provider'] : 'stripe';
     }
 }

@@ -633,6 +633,13 @@
             "license": [
                 "MIT"
             ],
+            "authors": [
+                {
+                    "name": "Marco Mark",
+                    "email": "marco.mark@dewsign.co.uk",
+                    "homepage": "https://dewsign.co.uk"
+                }
+            ],
             "description": "Support and helpers for Laravel PHP based projects",
             "time": "2018-01-31T11:11:39+00:00"
         },

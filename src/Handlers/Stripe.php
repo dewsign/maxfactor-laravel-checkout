@@ -4,7 +4,7 @@ namespace Maxfactor\Checkout\Handlers;
 
 use Omnipay\Omnipay;
 
-class Payment
+class Stripe
 {
     protected $gateway;
     protected $token;

@@ -2,7 +2,6 @@
 
 namespace Maxfactor\Checkout;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Maxfactor\Checkout\Contracts\Checkout;
 
