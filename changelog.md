@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.0] - 2018-02-21
+
+### Added
+
+- Postage interface to allow for custom postage calculations
+- Support for processing orders without expecting payment when the total is zero
+- Included missing order complete blade view
+
+### Changed
+
+- Google Tag Manager render function now simply returns an array to allow projects to decide which tag manager / ga component to use. Breaking change.
+- A blank checkout notice blade view can be used to display a custom message on the order complete screen which was previously hard-coded.
+
 ## [1.0.0] - 2018-02-21
 
 ### Added
