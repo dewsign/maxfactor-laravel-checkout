@@ -42,18 +42,25 @@
                     <h3>@lang('Sub total:') &pound;@{{ cartSubTotal | money }}</h3>
                     <span>@lang('maxfactor::checkout.postage_at_checkout')</span>
 
-                    <button
-                        data-url="{{ route('checkout.show', ['uid' => 'UUID']) }}"
-                        class="btn-primary"
-                        @click.prevent="prepareCheckout"
-                    >@lang('maxfactor::checkout.checkout_button')</button>
+                    <true-false :value="{{ config('maxfactor-checkout.minimum_order') }} && cartNetTotal >= {{ config('maxfactor-checkout.minimum_order') }}">
+                        <div slot="false">
+                            <span>@lang('maxfactor::checkout.minimum_order', ['value' => config('maxfactor-checkout.minimum_order')])</span>
+                        </div>
 
-                    <button
-                        data-url="{{ route('checkout.store', ['uid' => 'UUID', 'paypalauth']) }}"
-                        @click.prevent="prepareCheckout"
-                        class="btn-paypal"
-                    >
-                    </button>
+                        <div slot-scope="{}">
+                            <button
+                                data-url="{{ route('checkout.show', ['uid' => 'UUID']) }}"
+                                class="btn-primary"
+                                @click.prevent="prepareCheckout"
+                            >@lang('maxfactor::checkout.checkout_button')</button>
+
+                            <button
+                                data-url="{{ route('checkout.store', ['uid' => 'UUID', 'paypalauth']) }}"
+                                @click.prevent="prepareCheckout"
+                                class="btn-paypal"
+                            ></button>
+                        </div>
+                    </true-false>
                 </div>
             </div>
 
