@@ -37,9 +37,9 @@
                     <textarea v-model="activeCartCollection.notes"></textarea>
                 </div>
                 <div class="cart__continue">
-                    <h3>@lang('Net total:') &pound;@{{ cartNetTotal | money}}</h3>
-                    <h3>@lang('Tax total:') &pound;@{{ cartTaxTotal | money | default(' N/A') }}</h3>
-                    <h3>@lang('Sub total:') &pound;@{{ cartSubTotal | money }}</h3>
+                    <h3>@lang('Net total:') @{{ cartNetTotal | money}}</h3>
+                    <h3>@lang('Tax total:') @{{ cartTaxTotal | money | default(' N/A') }}</h3>
+                    <h3>@lang('Sub total:') @{{ cartSubTotal | money }}</h3>
                     <span>@lang('maxfactor::checkout.postage_at_checkout')</span>
 
                     <true-false :value="{{ config('maxfactor-checkout.minimum_order') }} && cartNetTotal >= {{ config('maxfactor-checkout.minimum_order') }}">
