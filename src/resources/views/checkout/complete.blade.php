@@ -26,7 +26,7 @@
                     @if (isset($orderID))
                         <p>@lang('Order') {{ $orderID }}</p>
                     @endif
-                    <h2>@lang('Thank you') @{{ currentCheckout.user.firstname }}</h2>
+                    <h2>@lang('Thank you') @{{ currentCheckout.billing.firstname }}</h2>
                     <h3>@lang('Your order is confirmed')</h3>
                     <p>@lang('Order updates will be sent to') <strong>@{{ currentCheckout.user.email }}</strong></p>
                 </div>
