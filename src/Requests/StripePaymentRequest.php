@@ -16,6 +16,19 @@ class StripePaymentRequest extends FormRequest
     ];
 
     /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'checkout.user.terms.required' => 'The terms must be accepted.',
+            'checkout.user.terms.accepted'  => 'The terms must be accepted.',
+        ];
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
