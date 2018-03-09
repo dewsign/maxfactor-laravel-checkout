@@ -14,9 +14,9 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        // TODO: get dynamic UUID from session / cookie
-        session(['checkout_uid' => 'd5c7d19a6628a7787dbaac754213af95']);
-        return redirect()->route('checkout.show', ['uid' => 'd5c7d19a6628a7787dbaac754213af95']);
+        if (!is_null(session()->get('checkoutUID'))) {
+            return redirect()->route('checkout.show', session()->get('checkoutUID'));
+        }
     }
 
     /**
