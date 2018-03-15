@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.2.2] - 2018-03-15
+
+### Changed
+
+- Removed double pound symbols
+- Updated checkout terms validation message
+- Ensure values passed to Omnipay are rounded to 2dp
+- Get checkout UID from session for index route
+
 ## [1.2.1] - 2018-03-06
 
 ### Added

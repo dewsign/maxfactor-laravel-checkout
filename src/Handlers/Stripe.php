@@ -56,7 +56,7 @@ class Stripe
      */
     public function amount($amount)
     {
-        $this->amount = $amount;
+        $this->amount = round($amount, 2);
 
         return $this;
     }

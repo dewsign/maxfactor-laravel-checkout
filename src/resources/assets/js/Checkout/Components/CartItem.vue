@@ -24,7 +24,7 @@
 
         <li v-if="!isModalCart">
             <span v-if="!isMiniCart" class="cart__mobile-title">Total</span>
-            &pound;{{ cartItemTotal(cartItem) }}
+            {{ cartItemTotal(cartItem) }}
         </li>
 
         <li v-if="isModalCart">

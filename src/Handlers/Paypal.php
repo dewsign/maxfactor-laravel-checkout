@@ -91,7 +91,7 @@ class PayPal
      */
     public function formatAmount($amount)
     {
-        return floatval($amount);
+        return round(floatval($amount), 2);
     }
 
     /**
