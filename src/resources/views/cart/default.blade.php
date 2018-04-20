@@ -47,7 +47,7 @@
                             <span>@lang('maxfactor::checkout.minimum_order', ['value' => config('maxfactor-checkout.minimum_order')])</span>
                         </div>
 
-                        <div slot-scope="{}">
+                        <div slot-scope="cartNetTotal">
                             <button
                                 data-url="{{ route('checkout.show', ['uid' => 'UUID']) }}"
                                 class="btn-primary"
