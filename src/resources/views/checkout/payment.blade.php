@@ -118,7 +118,7 @@
                                 <input id="addressPostcode" type="text" v-model="billingCollection.address_postcode" required>
                                 <v-form-error field="address_postcode"></v-form-error>
                             </div>
-                            <div class="user__field user__field--half sort-order3">
+                            <div class="user__field user__field--half sort-order3 user__field--country">
                                 <label for="addressCountry" class="label--required">@lang('Country')</label>
                                 <div class="select">
                                     <select v-model="billingCollection.address_country" id="addressCountry" required>

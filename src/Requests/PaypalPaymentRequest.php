@@ -10,7 +10,7 @@ class PaypalPaymentRequest extends FormRequest
     protected $rules = [
         'checkout.user.terms' => 'required|accepted',
     ];
-    
+
     /**
      * Get the error messages for the defined validation rules.
      *
@@ -53,7 +53,7 @@ class PaypalPaymentRequest extends FormRequest
             $rules['checkout.billing.address_city'] = 'required|string';
             $rules['checkout.billing.address_county'] = 'required|string';
             $rules['checkout.billing.address_postcode'] = 'required|string';
-            $rules['checkout.billing.address_country'] = 'required|string';
+            $rules['checkout.billing.address_country'] = 'nullable|string';
         }
 
         return $rules;
