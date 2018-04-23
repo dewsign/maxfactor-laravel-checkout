@@ -24,10 +24,10 @@
                 <div class="checkout__left-content">
                     <div class="checkout__customer-info">
                         <h1>@lang('Customer information')</h1>
-                        <span class="checkout__existing-customer" v-if="!isLoggedIn && canEditShipping">@lang('Already have an account?') 
+                        <span class="checkout__existing-customer" v-if="!isLoggedIn && canEditShipping">@lang('Already have an account?')
                             Login or Logout
                         </span>
-                        <span class="checkout__existing-customer" v-if="isLoggedIn && canEditShipping">@lang('You are logged in as') @{{ currentCheckout.shipping.firstname }} 
+                        <span class="checkout__existing-customer" v-if="isLoggedIn && canEditShipping">@lang('You are logged in as') @{{ currentCheckout.shipping.firstname }}
                             <v-button @click.prevent="emit('logout')">@lang('Logout')</v-button>
                         </span>
                         <span v-if="!canEditShipping">@lang('The details below are not editable')</span>
@@ -91,7 +91,7 @@
                             <input id="addressPostcode" type="text" v-model="currentCheckout.shipping.address_postcode" :disabled="!canEditShipping" required>
                             <v-form-error field="address_postcode"></v-form-error>
                         </div>
-                        <div class="user__field user__field--half sort-order3">
+                        <div class="user__field user__field--half sort-order3 user__field--country">
                             <label for="addressCountry" class="label--required">@lang('Country')</label>
                             <div class="select">
                                 <select v-model="currentCheckout.shipping.address_country" id="addressCountry" :disabled="!canEditShipping" required>
@@ -102,6 +102,10 @@
                                 </select>
                             </div>
                             <v-form-error field="address_country"></v-form-error>
+                        </div>
+                        <div class="user__field">
+                            <label for="address_notes">@lang('Delivery Notes')</label>
+                            <input id="address_notes" type="text" v-model="currentCheckout.shipping.address_notes" :disabled="!canEditShipping">
                         </div>
                         <div class="user__field user__field--half sort-order4" v-if="currentCheckout.taxOptional">
                             <label for="vatnumber" class="label--required">@lang('ECC VAT Number')</label>

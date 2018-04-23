@@ -43,7 +43,8 @@
                             @{{ currentCheckout.shipping.address_2 }}<br>
                             @{{ currentCheckout.shipping.address_city }}<br>
                             @{{ currentCheckout.shipping.address_postcode }}<br>
-                            @{{ currentCheckout.shipping.address_country }}
+                            @{{ currentCheckout.shipping.address_country }}<br>
+                            @{{ currentCheckout.shipping.address_notes }}
                         </p>
                     </div>
                     <div class="checkout__complete-address">
@@ -55,7 +56,8 @@
                             @{{ currentCheckout.billing.address_2 }}<br>
                             @{{ currentCheckout.billing.address_city }}<br>
                             @{{ currentCheckout.billing.address_postcode }}<br>
-                            @{{ currentCheckout.billing.address_country }}
+                            @{{ currentCheckout.billing.address_country }}<br>
+                            @{{ currentCheckout.billing.address_notes }}
                         </p>
                     </div>
                 </div>

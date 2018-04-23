@@ -53,7 +53,7 @@ class FreePaymentRequest extends FormRequest
             $rules['checkout.billing.address_city'] = 'required|string';
             $rules['checkout.billing.address_county'] = 'required|string';
             $rules['checkout.billing.address_postcode'] = 'required|string';
-            $rules['checkout.billing.address_country'] = 'required|string';
+            $rules['checkout.billing.address_country'] = 'nullable|string';
         }
 
         return $rules;

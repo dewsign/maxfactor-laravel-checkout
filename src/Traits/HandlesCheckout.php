@@ -160,7 +160,7 @@ trait HandlesCheckout
             'address_city' => 'required|string',
             'address_county' => 'required|string',
             'address_postcode' => 'required|string',
-            'address_country' => 'required|string',
+            'address_country' => 'nullable|string',
         ])->validate();
     }
 
