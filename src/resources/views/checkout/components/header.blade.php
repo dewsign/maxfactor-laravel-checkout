@@ -5,6 +5,6 @@
         </div>
     </header>
     <button name="button" class="checkout__summary-toggle" @click.prevent="toggleMobileCheckoutSummary()" :class="{ 'checkout__summary-toggle--active' : showMobileCheckoutSummary }">
-        <h4>@lang('Show order summary')<span>&pound;@{{ cartSubTotal | money }}</span></h4>
+        <h4>@lang('Show order summary')<span>@{{ cartSubTotal | money }}</span></h4>
     </button>
 </div>
