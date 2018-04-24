@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.2] - 2018-04-24
+
+### Changed
+
+- Removed double pound sign from header on mobile
+
 ## [1.3.1] - 2018-04-23
 
 ### Changed
