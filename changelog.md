@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.4.0] - 2018-04-25
+
+### Changed
+
+- Removed hard-coded path to 'Terms & Conditions' page in checkout and replaced with the `route` helper function.
+- Ensured text inside 'Terms & Conditions' link in checkout is translatable.
+- Added class to 'Terms & Conditions' link in checkout in order to style element more easily.
+- Improved readability of 'Terms & Conditions' link markup in checkout.
 
 ## [1.3.2] - 2018-04-24
 

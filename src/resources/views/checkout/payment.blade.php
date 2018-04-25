@@ -44,7 +44,13 @@
                         </template>
                     </div>
                     <div class="checkout__terms">
-                        <label><input type="checkbox" v-model="currentCheckout.user.terms">@lang('Please check the box to agree to our') <a href="/pages/legal/terms-conditions-summary" target="_blank">terms &amp; conditions</a></label>
+                        <label>
+                            <input type="checkbox" v-model="currentCheckout.user.terms">
+                            @lang('Please check the box to agree to our')
+                            <a class="checkout__terms-link" href="{{ route('termsConditions') }}" target="_blank">
+                                @lang('terms &amp; conditions')
+                            </a>
+                        </label>
                         <v-form-error field="checkout.user.terms"></v-form-error>
                     </div>
 
