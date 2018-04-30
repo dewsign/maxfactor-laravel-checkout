@@ -293,24 +293,8 @@ trait HandlesCheckout
 
             Session::put('js_vars', [
                 "uid" => $this->uid,
-                "checkout.shipping.{$this->uid}" => collect([
-                    'firstname' => $paypalData['FIRSTNAME'],
-                    'surname' => $paypalData['LASTNAME'],
-                    'address' => $paypalData['SHIPTOSTREET'],
-                    'address_city' => $paypalData['SHIPTOCITY'],
-                    'address_county' => $paypalData['SHIPTOSTATE'],
-                    'address_postcode' => $paypalData['SHIPTOZIP'],
-                    'address_country' => $paypalData['SHIPTOCOUNTRYCODE'],
-                ]),
-                "checkout.billing.{$this->uid}" => collect([
-                    'firstname' => $paypalData['FIRSTNAME'],
-                    'surname' => $paypalData['LASTNAME'],
-                    'address' => $paypalData['SHIPTOSTREET'],
-                    'address_city' => $paypalData['SHIPTOCITY'],
-                    'address_county' => $paypalData['SHIPTOSTATE'],
-                    'address_postcode' => $paypalData['SHIPTOZIP'],
-                    'address_country' => $paypalData['SHIPTOCOUNTRYCODE'],
-                ]),
+                "checkout.shipping.{$this->uid}" => $this->collectPayPalAddress($paypalData),
+                "checkout.billing.{$this->uid}" => $this->collectPayPalAddress($paypalData),
                 "checkout.user.{$this->uid}" => collect([
                     'email' => $paypalData['EMAIL'],
                 ]),
@@ -323,6 +307,32 @@ trait HandlesCheckout
                 ]),
             ]);
         }
+    }
+
+    /**
+     * Collection of optional PayPal address fields
+     *
+     * @param array $paypalData
+     * @return Collection
+     */
+    private function collectPayPalAddress($paypalData)
+    {
+        return collect([
+            'firstname' => isset($paypalData['FIRSTNAME'])
+                ? $paypalData['FIRSTNAME'] : '',
+            'surname' => isset($paypalData['LASTNAME'])
+                ? $paypalData['LASTNAME'] : '',
+            'address' => isset($paypalData['SHIPTOSTREET'])
+                ? $paypalData['SHIPTOSTREET'] : '',
+            'address_city' => isset($paypalData['SHIPTOCITY'])
+                ? $paypalData['SHIPTOCITY'] : '',
+            'address_county' => isset($paypalData['SHIPTOSTATE'])
+                ? $paypalData['SHIPTOSTATE'] : '',
+            'address_postcode' => isset($paypalData['SHIPTOZIP'])
+                ? $paypalData['SHIPTOZIP'] : '',
+            'address_country' => isset($paypalData['SHIPTOCOUNTRYCODE'])
+                ? $paypalData['SHIPTOCOUNTRYCODE'] : '',
+        ]);
     }
 
     /**
