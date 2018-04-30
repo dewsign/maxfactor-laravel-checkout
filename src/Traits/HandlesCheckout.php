@@ -318,20 +318,13 @@ trait HandlesCheckout
     private function collectPayPalAddress($paypalData)
     {
         return collect([
-            'firstname' => isset($paypalData['FIRSTNAME'])
-                ? $paypalData['FIRSTNAME'] : '',
-            'surname' => isset($paypalData['LASTNAME'])
-                ? $paypalData['LASTNAME'] : '',
-            'address' => isset($paypalData['SHIPTOSTREET'])
-                ? $paypalData['SHIPTOSTREET'] : '',
-            'address_city' => isset($paypalData['SHIPTOCITY'])
-                ? $paypalData['SHIPTOCITY'] : '',
-            'address_county' => isset($paypalData['SHIPTOSTATE'])
-                ? $paypalData['SHIPTOSTATE'] : '',
-            'address_postcode' => isset($paypalData['SHIPTOZIP'])
-                ? $paypalData['SHIPTOZIP'] : '',
-            'address_country' => isset($paypalData['SHIPTOCOUNTRYCODE'])
-                ? $paypalData['SHIPTOCOUNTRYCODE'] : '',
+            'firstname' => isset($paypalData['FIRSTNAME']) ?? '',
+            'surname' => isset($paypalData['LASTNAME']) ?? '',
+            'address' => isset($paypalData['SHIPTOSTREET']) ?? '',
+            'address_city' => isset($paypalData['SHIPTOCITY']) ?? '',
+            'address_county' => isset($paypalData['SHIPTOSTATE']) ?? '',
+            'address_postcode' => isset($paypalData['SHIPTOZIP']) ?? '',
+            'address_country' => isset($paypalData['SHIPTOCOUNTRYCODE']) ?? '',
         ]);
     }
 
