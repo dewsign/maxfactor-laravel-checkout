@@ -76,6 +76,7 @@ trait HandlesCheckout
             "checkout.billing.{$uid}" => $this->get('billing'),
             "checkout.user.{$uid}" => $this->get('user'),
             "stage.{$uid}" => $this->getFirst('stage'),
+            "serverStage.{$uid}" => $this->getFirst('serverStage'),
         ])->filter(function ($value, $key) {
             if ($value instanceof Collection) {
                 return $value->count();
@@ -110,6 +111,7 @@ trait HandlesCheckout
                 "checkout.billing.{$this->uid}" => Request::get('checkout')['billing'],
                 "checkout.user.{$this->uid}" => Request::get('checkout')['user'],
                 "stage.{$this->uid}" => $this->getFirst('stage'),
+                "serverStage.{$this->uid}" => $this->getFirst('serverStage'),
             ])->filter(function ($value, $key) {
                 if ($value instanceof Collection) {
                     return $value->count();
