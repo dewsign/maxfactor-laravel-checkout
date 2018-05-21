@@ -213,6 +213,9 @@ trait HandlesCheckout
             ->setUid($this->uid)
             ->process();
 
+        Session::put('paymentResponse', $paymentResponseData);
+        $this->append('paymentResponse', $paymentResponseData);
+
         // Send the payment response to the Api for processing
         $newCheckout = App::make(Checkout::class, [
             'uid' => $this->getFirst('uid'),
