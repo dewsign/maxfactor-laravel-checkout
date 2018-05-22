@@ -217,7 +217,7 @@ trait HandlesCheckout
         $this->append('paymentResponse', $paymentResponseData);
 
         // Send the payment response to the Api for processing
-        $newCheckout = App::make(Checkout::class, [
+        App::make(Checkout::class, [
             'uid' => $this->getFirst('uid'),
             'params' => [
                 'checkout' => collect(Request::get('checkout'))->toArray(),
