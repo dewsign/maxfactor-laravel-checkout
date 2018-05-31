@@ -56,53 +56,70 @@
                             <input id="addressSurname" type="text" v-model="currentCheckout.shipping.surname" :disabled="!canEditShipping" required>
                             <v-form-error field="surname"></v-form-error>
                         </div>
-                        <div class="user__field">
-                            <label for="addressCompany">@lang('Company')</label>
-                            <input id="addressCompany" type="text" v-model="currentCheckout.shipping.company" :disabled="!canEditShipping">
-                            <v-form-error field="company"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order1">
-                            <label for="addressAddress" class="label--required">@lang('Address')</label>
-                            <input id="addressAddress" type="text" v-model="currentCheckout.shipping.address" :disabled="!canEditShipping" required>
-                            <v-form-error field="address"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order2">
-                            <label for="addressAddress2">@lang('Address 2')</label>
-                            <input id="addressAddress2" type="text" v-model="currentCheckout.shipping.address_2" :disabled="!canEditShipping">
-                            <v-form-error field="address_2"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order3">
-                            <label for="addressAddress3">@lang('Address 3')</label>
-                            <input id="addressAddress3" type="text" v-model="currentCheckout.shipping.address_3" :disabled="!canEditShipping">
-                            <v-form-error field="address_3"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order4">
-                            <label for="addressCity" class="label--required">@lang('City')</label>
-                            <input id="addressCity" type="text" v-model="currentCheckout.shipping.address_city" :disabled="!canEditShipping" required>
-                            <v-form-error field="address_city"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order1">
-                            <label for="addressCounty" class="label--required">@lang('County')</label>
-                            <input id="addressCounty" type="text" v-model="currentCheckout.shipping.address_county" :disabled="!canEditShipping" required>
-                            <v-form-error field="address_county"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order2">
-                            <label for="addressPostcode" class="label--required">@lang('Post code')</label>
-                            <input id="addressPostcode" type="text" v-model="currentCheckout.shipping.address_postcode" :disabled="!canEditShipping" required>
-                            <v-form-error field="address_postcode"></v-form-error>
-                        </div>
-                        <div class="user__field user__field--half sort-order3 user__field--country">
-                            <label for="addressCountry" class="label--required">@lang('Country')</label>
-                            <div class="select">
-                                <select v-model="currentCheckout.shipping.address_country" id="addressCountry" :disabled="!canEditShipping" required>
-                                    <option selected disabled>Please select</option>
-                                    @foreach (Maxfactor::countries() as $code => $item)
-                                        <option value="{{ $code }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <v-form-error field="address_country"></v-form-error>
-                        </div>
+
+                        <mx-address v-model="currentCheckout.shipping" api-key="{{ config('maxfactor-checkout.pca_key') }}" class="checkout__customer-info">
+                            <template slot="selection" slot-scope="{ addresses, select, haveAddresses, clearAddresses }">
+                                <postcode-modal
+                                    :addresses="addresses"
+                                    :value="haveAddresses"
+                                    @input="clearAddresses"
+                                    @select="select"
+                                >
+                                </postcode-modal>
+                            </template>
+
+                            <template slot-scope="{ address, changeAddress }">
+                                <div class="user__field">
+                                    <label for="addressCompany">@lang('Company')</label>
+                                    <input id="addressCompany" type="text" v-model="address.company" :disabled="!canEditShipping">
+                                    <v-form-error field="company"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order1">
+                                    <label for="addressAddress" class="label--required">@lang('Address')</label>
+                                    <input id="addressAddress" type="text" v-model="address.address" :disabled="!canEditShipping" required>
+                                    <v-form-error field="address"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order2">
+                                    <label for="addressAddress2">@lang('Address 2')</label>
+                                    <input id="addressAddress2" type="text" v-model="address.address_2" :disabled="!canEditShipping">
+                                    <v-form-error field="address_2"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order3">
+                                    <label for="addressAddress3">@lang('Address 3')</label>
+                                    <input id="addressAddress3" type="text" v-model="address.address_3" :disabled="!canEditShipping">
+                                    <v-form-error field="address_3"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order4">
+                                    <label for="addressCity" class="label--required">@lang('City')</label>
+                                    <input id="addressCity" type="text" v-model="address.address_city" :disabled="!canEditShipping" required>
+                                    <v-form-error field="address_city"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order1">
+                                    <label for="addressCounty" class="label--required">@lang('County')</label>
+                                    <input id="addressCounty" type="text" v-model="address.address_county" :disabled="!canEditShipping" required>
+                                    <v-form-error field="address_county"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half sort-order2">
+                                    <label for="addressPostcode" class="label--required">@lang('Post code')</label>
+                                    <input id="addressPostcode" type="text" v-model="address.address_postcode" :disabled="!canEditShipping" required>
+                                    <v-form-error field="address_postcode"></v-form-error>
+                                    <button @click.prevent="changeAddress">Change address</button>
+                                </div>
+                                <div class="user__field user__field--half sort-order3 user__field--country">
+                                    <label for="addressCountry" class="label--required">@lang('Country')</label>
+                                    <div class="select">
+                                        <select v-model="address.address_country" id="addressCountry" :disabled="!canEditShipping" required>
+                                            <option selected disabled>Please select</option>
+                                            @foreach (Maxfactor::countries() as $code => $item)
+                                                <option value="{{ $code }}">{{ $item }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <v-form-error field="address_country"></v-form-error>
+                                </div>
+                            </template>
+                        </mx-address>
+
                         <div class="user__field">
                             <label for="address_notes">@lang('Delivery Notes')</label>
                             <input id="address_notes" type="text" v-model="currentCheckout.shipping.address_notes" :disabled="!canEditShipping">
