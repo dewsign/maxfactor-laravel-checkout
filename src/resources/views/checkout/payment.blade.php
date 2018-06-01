@@ -132,7 +132,7 @@
                                         <input id="addressCounty" type="text" v-model="address.address_county" :disabled="!canEditShipping" required>
                                         <v-form-error field="address_county"></v-form-error>
                                     </div>
-                                    <div class="user__field user__field--half sort-order2">
+                                    <div class="user__field user__field--half user__field--postcode sort-order2">
                                         <label for="addressPostcode" class="label--required">@lang('Post code')</label>
                                         <input id="addressPostcode" type="text" v-model="address.address_postcode" :disabled="!canEditShipping" required>
                                         <v-form-error field="address_postcode"></v-form-error>
