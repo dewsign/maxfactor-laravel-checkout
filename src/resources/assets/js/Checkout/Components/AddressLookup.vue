@@ -91,6 +91,15 @@
             },
         },
 
+        watch: {
+            value: {
+                handler(newValue) {
+                    this.$set(this, 'address', newValue)
+                },
+                deep: true,
+            },
+        },
+
         methods: {
             /**
              * Lookup a postcode and return a list of available addresses
