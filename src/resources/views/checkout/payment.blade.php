@@ -82,12 +82,12 @@
                             <div class="user__field user__field--half">
                                 <label for="addressFirstName" class="label--required">@lang('First name')</label>
                                 <input id="addressFirstName" type="text" v-model="billingCollection.firstname" required>
-                                <v-form-error field="firstname"></v-form-error>
+                                <v-form-error field="checkout.billing.firstname"></v-form-error>
                             </div>
                             <div class="user__field user__field--half">
                                 <label for="addressSurname" class="label--required">@lang('Surname')</label>
                                 <input id="addressSurname" type="text" v-model="billingCollection.surname" required>
-                                <v-form-error field="surname"></v-form-error>
+                                <v-form-error field="checkout.billing.surname"></v-form-error>
                             </div>
 
                             <mx-address v-model="billingCollection" api-key="{{ config('maxfactor-checkout.pca_key') }}" class="checkout__customer-info">
@@ -105,37 +105,37 @@
                                     <div class="user__field">
                                         <label for="addressCompany">@lang('Company')</label>
                                         <input id="addressCompany" type="text" v-model="address.company" :disabled="!canEditShipping">
-                                        <v-form-error field="company"></v-form-error>
+                                        <v-form-error field="checkout.billing.company"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half sort-order1">
                                         <label for="addressAddress" class="label--required">@lang('Address')</label>
                                         <input id="addressAddress" type="text" v-model="address.address" :disabled="!canEditShipping" required>
-                                        <v-form-error field="address"></v-form-error>
+                                        <v-form-error field="checkout.billing.address"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half sort-order2">
                                         <label for="addressAddress2">@lang('Address 2')</label>
                                         <input id="addressAddress2" type="text" v-model="address.address_2" :disabled="!canEditShipping">
-                                        <v-form-error field="address_2"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_2"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half sort-order3">
                                         <label for="addressAddress3">@lang('Address 3')</label>
                                         <input id="addressAddress3" type="text" v-model="address.address_3" :disabled="!canEditShipping">
-                                        <v-form-error field="address_3"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_3"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half sort-order4">
                                         <label for="addressCity" class="label--required">@lang('City')</label>
                                         <input id="addressCity" type="text" v-model="address.address_city" :disabled="!canEditShipping" required>
-                                        <v-form-error field="address_city"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_city"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half sort-order1">
-                                        <label for="addressCounty" class="label--required">@lang('County')</label>
+                                        <label for="addressCounty">@lang('County')</label>
                                         <input id="addressCounty" type="text" v-model="address.address_county" :disabled="!canEditShipping" required>
-                                        <v-form-error field="address_county"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_county"></v-form-error>
                                     </div>
                                     <div class="user__field user__field--half user__field--postcode sort-order2">
                                         <label for="addressPostcode" class="label--required">@lang('Post code')</label>
                                         <input id="addressPostcode" type="text" v-model="address.address_postcode" :disabled="!canEditShipping" required>
-                                        <v-form-error field="address_postcode"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_postcode"></v-form-error>
                                         <button @click.prevent="changeAddress">Change address</button>
                                     </div>
                                     <div class="user__field user__field--half sort-order3 user__field--country">
@@ -148,7 +148,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <v-form-error field="address_country"></v-form-error>
+                                        <v-form-error field="checkout.billing.address_country"></v-form-error>
                                     </div>
                                 </template>
                             </mx-address>
