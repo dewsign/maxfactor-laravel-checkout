@@ -25,6 +25,11 @@ class StripePaymentRequest extends FormRequest
         return [
             'checkout.user.terms.required' => 'The terms must be accepted.',
             'checkout.user.terms.accepted'  => 'The terms must be accepted.',
+            'checkout.billing.firstname.required'  => 'The firstname field is required.',
+            'checkout.billing.surname.required'  => 'The surname field is required.',
+            'checkout.billing.address.required'  => 'The address field is required.',
+            'checkout.billing.address_city.required'  => 'The city field is required.',
+            'checkout.billing.address_postcode.required'  => 'The postcode field is required.',
         ];
     }
 
@@ -55,7 +60,7 @@ class StripePaymentRequest extends FormRequest
             $rules['checkout.billing.address_2'] = 'nullable|string';
             $rules['checkout.billing.address_3'] = 'nullable|string';
             $rules['checkout.billing.address_city'] = 'required|string';
-            $rules['checkout.billing.address_county'] = 'required|string';
+            $rules['checkout.billing.address_county'] = 'nullable|string';
             $rules['checkout.billing.address_postcode'] = 'required|string';
             $rules['checkout.billing.address_country'] = 'nullable|string';
         }

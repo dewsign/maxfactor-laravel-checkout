@@ -95,7 +95,7 @@
                                     <v-form-error field="address_city"></v-form-error>
                                 </div>
                                 <div class="user__field user__field--half sort-order1">
-                                    <label for="addressCounty" class="label--required">@lang('County')</label>
+                                    <label for="addressCounty">@lang('County')</label>
                                     <input id="addressCounty" type="text" v-model="address.address_county" :disabled="!canEditShipping" required>
                                     <v-form-error field="address_county"></v-form-error>
                                 </div>
