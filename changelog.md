@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - The discount code in the Cart would always throw a promise error if it was invalid. Added catch.
+- Remove object destructuring from blade templates for IE compatibility
 
 ## [1.5.1] - 2018-06-06
 
