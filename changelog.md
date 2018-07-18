@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Stripe component now caches the token itself and invalidates it when the user updates the card details. Now, a new token is only requested if the card details have changed, not everytime the submit button is pressed.
 
+## [1.5.2] - 2018-07-02
+
+### Fixed
+
+- The discount code in the Cart would always throw a promise error if it was invalid. Added catch.
+- Remove object destructuring from blade templates for IE compatibility
+
 ## [1.5.1] - 2018-06-06
 
 ### Changed

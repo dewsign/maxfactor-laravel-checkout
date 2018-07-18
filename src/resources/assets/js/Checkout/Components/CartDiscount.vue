@@ -2,11 +2,11 @@
     <div class="checkout__discount">
         <label for="checkoutDiscount">Discount</label>
         <input id="checkoutDiscount" type="text" v-model="currentCode" aria-label="Add discount code" :aria-invalid="formFieldValid('code')">
-        <button 
+        <button
             class="btn-primary btn--pre-loading"
             :class="formIsLoading ? 'btn--loading' : ''"
             :disabed="formIsLoading"
-            type="submit" 
+            type="submit"
             @click.prevent="applyDiscount"
         >Apply</button>
         <v-form-error field="code"></v-form-error>
@@ -51,7 +51,7 @@
                             this.message = 'Discount applied'
                             this.currentCheckout.discount = response.data
                         }
-                    })
+                    }).catch(() => console.log('The discount code could not be verified'))
             },
         },
     }
