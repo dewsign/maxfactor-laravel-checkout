@@ -11,6 +11,7 @@ class Stripe
     protected $currency = 'GBP';
     protected $amount;
     protected $reference;
+    protected $idempotency;
 
     /**
      * Create the payment gateway
@@ -20,6 +21,20 @@ class Stripe
     public function __construct(string $gateway = 'Stripe')
     {
         $this->gateway = Omnipay::create($gateway)->setApiKey(env('STRIPE_API_KEY'));
+    }
+
+    /**
+     * Sets the Idempotency header in the stripe request to ensure thi stransaction can never be
+     * processed more than once.
+     *
+     * @param string $key
+     * @return void
+     */
+    public function idempotencyKey(string $key)
+    {
+        $this->idempotency = $key;
+
+        return $this;
     }
 
     /**
@@ -82,13 +97,23 @@ class Stripe
      */
     public function charge()
     {
-        return $this->gateway->purchase([
-            'amount' => $this->amount,
-            'currency' => $this->currency,
-            'token' => $this->token,
-            'metadata' => [
-                'orderID' => $this->reference,
-            ]
-        ])->send();
+        $purchase = $this->gateway
+            ->purchase([
+                'amount' => $this->amount,
+                'currency' => $this->currency,
+                'token' => $this->token,
+                'metadata' => [
+                    'orderID' => $this->reference,
+                ]
+            ]);
+
+        /**
+         * Ensure a transaction is only processed one.
+         */
+        if ($this->idempotency) {
+            $purchase->setIdempotencyKeyHeader($this->idempotency);
+        }
+
+        return $purchase->send();
     }
 }
