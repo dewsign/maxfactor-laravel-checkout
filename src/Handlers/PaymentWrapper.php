@@ -87,6 +87,7 @@ class PaymentWrapper
         $token = Request::get('checkout')['payment']['token']['id'];
 
         $paymentResponse = (new Stripe())
+            ->idempotencyKey($token) // We only want to allow a single charge per token
             ->token($token)
             ->amount($this->amount)
             ->reference($this->orderID)
