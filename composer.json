@@ -11,10 +11,11 @@
         }
     ],
     "require": {
-        "omnipay/paypal": "~2.0",
-        "omnipay/stripe": "^2.4",
         "laravel/framework": "^5",
-        "maxfactor/support": "^1.0.0"
+        "maxfactor/support": "^1.0.0",
+        "league/omnipay": "^3.0",
+        "omnipay/stripe": "^3.0",
+        "omnipay/paypal": "^3.0"
     },
     "autoload": {
         "psr-4": {
