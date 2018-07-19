@@ -7,4 +7,6 @@
         @click.prevent="{{ isset($onClick) ? $onClick : 'prepareCheckout' }}"
         :disabled="formIsLoading === true"
     >{{ $continueLabel }}</button>
+
+    <p class="error" v-if="formHasErrors">Please review required fields</p>
 </div>
