@@ -39,7 +39,7 @@
                             <div class="user__field">
                                 <label for="nameoOnCard" class="label--required">@lang('Name on card')</label>
                                 <input id="nameoOnCard" type="text" v-model="currentCheckout.billing.nameoncard" required>
-                                <v-form-error field="nameoncard"></v-form-error>
+                                <v-form-error field="checkout.billing.nameoncard"></v-form-error>
                             </div>
                         </template>
                     </div>
