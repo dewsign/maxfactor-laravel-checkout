@@ -25,6 +25,7 @@ class StripePaymentRequest extends FormRequest
         return [
             'checkout.user.terms.required' => 'The terms must be accepted.',
             'checkout.user.terms.accepted'  => 'The terms must be accepted.',
+            'checkout.billing.nameoncard.required'  => 'Please enter the name displayed on the Card',
             'checkout.billing.firstname.required'  => 'The firstname field is required.',
             'checkout.billing.surname.required'  => 'The surname field is required.',
             'checkout.billing.address.required'  => 'The address field is required.',
