@@ -2,9 +2,10 @@
 
 namespace Maxfactor\Checkout\Handlers;
 
-use Maxfactor\Checkout\Handlers\Paypal;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Maxfactor\Checkout\Handlers\Paypal;
 use Maxfactor\Checkout\Handlers\Stripe;
 
 class PaymentWrapper
@@ -61,6 +62,29 @@ class PaymentWrapper
         return $this;
     }
 
+    private function cacheKey()
+    {
+        return sprintf('payment.response.%s.%s', str_slug($this->orderID), str_slug($this->amount));
+    }
+
+    /**
+     * Allow a maximum of 1 payment to be processed every second for the same order and the same amount.
+     * This should typically never happen unless the front-end sent multiple requests simultaneously.
+     *
+     * @return void
+     */
+    private function isAlreadyProcessingPayment()
+    {
+        if (Cache::has($this->cacheKey())) {
+            clock()->warning('already processing payment');
+            return true;
+        };
+
+        Cache::put($this->cacheKey(), 'processing', 10/60);
+
+        return false;
+    }
+
     /**
      * Delegate to relevant processing method
      *
@@ -69,6 +93,10 @@ class PaymentWrapper
     public function process()
     {
         $paymentMethod = sprintf("process%s", ucfirst($this->provider));
+
+        if ($this->isAlreadyProcessingPayment()) {
+            return [];
+        }
 
         if (method_exists($this, $paymentMethod)) {
             return $this->{$paymentMethod}();
@@ -93,6 +121,8 @@ class PaymentWrapper
             ->reference($this->orderID)
             ->charge();
 
+        Cache::put($this->cacheKey(), 'processed', 2/60);
+
         return $paymentResponse->getData();
     }
 
@@ -112,6 +142,8 @@ class PaymentWrapper
             'currency' => 'GBP',
         ])->send();
 
+        Cache::put($this->cacheKey(), 'processed', 2/60);
+
         return $paymentResponse->getData();
     }
 
@@ -122,6 +154,8 @@ class PaymentWrapper
      */
     protected function processFree()
     {
+        Cache::put($this->cacheKey(), 'processed', 2/60);
+
         return [
             'freeorder' => 'success',
             'reference' => $this->orderID,

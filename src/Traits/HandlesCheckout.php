@@ -5,9 +5,9 @@ namespace Maxfactor\Checkout\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Maxfactor\Checkout\Handlers\Paypal;
 use Illuminate\Support\Facades\Validator;
 use Maxfactor\Checkout\Contracts\Postage;
 use Maxfactor\Checkout\Contracts\Checkout;
@@ -205,6 +205,15 @@ trait HandlesCheckout
 
         // Call relevant validation form request based on $provider
         App::make(sprintf("\Maxfactor\Checkout\Requests\%sPaymentRequest", ucfirst($provider)));
+
+        $checkout = App::make(Checkout::class, [
+            'uid' => $this->getFirst('uid'),
+        ]);
+
+        if (!$checkout->isPaymentRequired()) {
+            // This order has already been paid
+            return $this;
+        }
 
         // Pass to payment handler for processing payment
         $paymentResponseData = (new PaymentWrapper($provider))
