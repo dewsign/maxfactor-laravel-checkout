@@ -3,7 +3,8 @@
         @lang('Net total:')<span>@{{ cartNetTotal | money }}</span>
     </div>
     <div class="checkout__subtotal" v-if="cartDiscountTotal > 0">
-        @lang('Discount:') @{{ currentCheckout.discount.percentage | percentage }}
+        @lang('Discount:')
+        <template v-if="currentCheckout.discount.type === 'percentage'">@{{ currentCheckout.discount.value | percentage }}</template>
         <span>@{{ cartDiscountTotal | money }}</span>
     </div>
     {{-- TODO: Display only after step 1 has been completed   --}}
