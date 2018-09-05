@@ -4,7 +4,7 @@
     </div>
     <div class="checkout__subtotal" v-if="cartDiscountTotal > 0">
         @lang('Discount:')
-        <template v-if="currentCheckout.discount.type === 'percentage'">@{{ currentCheckout.discount.value | percentage }}</template>
+        <template v-if="currentCheckout.discount.percentage && currentCheckout.discount.percentage > 0">@{{ currentCheckout.discount.percentage | percentage }}</template>
         <span>@{{ cartDiscountTotal | money }}</span>
     </div>
     {{-- TODO: Display only after step 1 has been completed   --}}
