@@ -12,11 +12,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Handle both monetary and percentage discounts
 - Pass discount data back to front end
 
-## [1.6.0] - 2018-08-13
+## [1.7.0] - 2018-08-13
 
 ### Changed
 
 - Avoid processing payments on orders which have already been paid
+
+## [1.6.0] - 2018-08-15
+
+### Changed
+
+- Add caching to only process a single payment for an order even if multiple processes are trying (button mashing)
 
 ## [1.5.4] - 2018-07-23
 
