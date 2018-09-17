@@ -75,6 +75,7 @@ trait HandlesCheckout
             "checkout.shipping.{$uid}" => $this->get('shipping'),
             "checkout.billing.{$uid}" => $this->get('billing'),
             "checkout.user.{$uid}" => $this->get('user'),
+            "checkout.discount.{$uid}" => $this->get('discount'),
             "stage.{$uid}" => $this->getFirst('stage'),
             "serverStage.{$uid}" => $this->getFirst('serverStage'),
         ])->filter(function ($value, $key) {
@@ -110,6 +111,7 @@ trait HandlesCheckout
                 "checkout.shipping.{$this->uid}" => Request::get('checkout')['shipping'],
                 "checkout.billing.{$this->uid}" => Request::get('checkout')['billing'],
                 "checkout.user.{$this->uid}" => Request::get('checkout')['user'],
+                "checkout.discount.{$this->uid}" => Request::get('checkout')['discount'],
                 "stage.{$this->uid}" => $this->getFirst('stage'),
                 "serverStage.{$this->uid}" => $this->getFirst('serverStage'),
             ])->filter(function ($value, $key) {

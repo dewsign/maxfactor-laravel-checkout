@@ -1,10 +1,15 @@
-<div class="checkout__summary">
+<div class="checkout__summary">    
     <div class="checkout__subtotal">
         @lang('Net total:')<span>@{{ cartNetTotal | money }}</span>
     </div>
     <div class="checkout__subtotal" v-if="cartDiscountTotal > 0">
-        @lang('Discount:') @{{ currentCheckout.discount.percentage | percentage }}
+        @lang('Discount:')
+        <template v-if="currentCheckout.discount.percentage && currentCheckout.discount.percentage > 0">@{{ currentCheckout.discount.percentage | percentage }}</template>
         <span>@{{ cartDiscountTotal | money }}</span>
+    </div>
+    <div class="checkout__subtotal error" v-if="currentCheckout.discount.error">
+        @lang('Discount:')
+        <span>@{{ currentCheckout.discount.error }}</span>
     </div>
     {{-- TODO: Display only after step 1 has been completed   --}}
     <div class="checkout__shipping">
