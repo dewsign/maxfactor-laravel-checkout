@@ -29,7 +29,10 @@
                             <label>Paying with PayPal Express</label>
                         </template>
                         <template v-else-if="currentCheckout.payment.provider == 'free'">
-                            <label>Free Order</label>
+                            <div class="checkout__free">
+                                <label>No payment required for order.</label>
+                                <label v-if="currentCheckout.discount.message">@{{ currentCheckout.discount.message }}</label>
+                            </div>
                         </template>
                         <template v-else>
                             <mx-stripe class="user__field"
@@ -53,107 +56,103 @@
                         </label>
                         <v-form-error field="checkout.user.terms"></v-form-error>
                     </div>
+                
+                    <template v-if="currentCheckout.payment.provider != 'free'">
+                        <template v-if="currentCheckout.payment.provider == 'paypal'">
+                            <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
+                                <h3>@lang('Billing address')</h3>
+                                <label>Provided by PayPal</label>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
+                                <h3>@lang('Billing address')</h3>
+                                <div class="checkout__shipping-option">
+                                    <input name="billingUseShipping" id="billingUseShipping" type="radio" v-model="currentCheckout.useShipping" :value="true">
+                                    <label for="billingUseShipping">@lang('Same as shipping address')</label>
+                                </div>
+                                <div class="checkout__shipping-option">
+                                    <input name="billingUseDifferent" id="billingUseDifferent" type="radio" v-model="currentCheckout.useShipping" :value="false">
+                                    <label for="billingUseDifferent">@lang('Use a different billing address')</label>
+                                </div>
+                            </div>
+                            <div class="checkout__customer-info checkout__customer-info--no-border" v-if="!currentCheckout.useShipping">
+                                <div class="user__field user__field--half">
+                                    <label for="addressFirstName" class="label--required">@lang('First name')</label>
+                                    <input id="addressFirstName" type="text" v-model="billingCollection.firstname" required>
+                                    <v-form-error field="checkout.billing.firstname"></v-form-error>
+                                </div>
+                                <div class="user__field user__field--half">
+                                    <label for="addressSurname" class="label--required">@lang('Surname')</label>
+                                    <input id="addressSurname" type="text" v-model="billingCollection.surname" required>
+                                    <v-form-error field="checkout.billing.surname"></v-form-error>
+                                </div>
 
-                    <template v-if="currentCheckout.payment.provider == 'free'">
-                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
-                            <h3>@lang('Billing address')</h3>
-                            <label>Free Order</label>
-                        </div>
-                    </template>
-                    <template v-else-if="currentCheckout.payment.provider == 'paypal'">
-                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
-                            <h3>@lang('Billing address')</h3>
-                            <label>Provided by PayPal</label>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="checkout__customer-info checkout__customer-info--pad-bot-sml">
-                            <h3>@lang('Billing address')</h3>
-                            <div class="checkout__shipping-option">
-                                <input name="billingUseShipping" id="billingUseShipping" type="radio" v-model="currentCheckout.useShipping" :value="true">
-                                <label for="billingUseShipping">@lang('Same as shipping address')</label>
-                            </div>
-                            <div class="checkout__shipping-option">
-                                <input name="billingUseDifferent" id="billingUseDifferent" type="radio" v-model="currentCheckout.useShipping" :value="false">
-                                <label for="billingUseDifferent">@lang('Use a different billing address')</label>
-                            </div>
-                        </div>
-                        <div class="checkout__customer-info checkout__customer-info--no-border" v-if="!currentCheckout.useShipping">
-                            <div class="user__field user__field--half">
-                                <label for="addressFirstName" class="label--required">@lang('First name')</label>
-                                <input id="addressFirstName" type="text" v-model="billingCollection.firstname" required>
-                                <v-form-error field="checkout.billing.firstname"></v-form-error>
-                            </div>
-                            <div class="user__field user__field--half">
-                                <label for="addressSurname" class="label--required">@lang('Surname')</label>
-                                <input id="addressSurname" type="text" v-model="billingCollection.surname" required>
-                                <v-form-error field="checkout.billing.surname"></v-form-error>
-                            </div>
+                                <mx-address v-model="billingCollection" api-key="{{ config('maxfactor-checkout.pca_key') }}" class="checkout__customer-info">
+                                    <template slot="selection" slot-scope="props">
+                                        <postcode-modal
+                                            :addresses="props.addresses"
+                                            :value="props.haveAddresses"
+                                            @input="props.clearAddresses"
+                                            @select="props.select"
+                                        >
+                                        </postcode-modal>
+                                    </template>
 
-                            <mx-address v-model="billingCollection" api-key="{{ config('maxfactor-checkout.pca_key') }}" class="checkout__customer-info">
-                                <template slot="selection" slot-scope="props">
-                                    <postcode-modal
-                                        :addresses="props.addresses"
-                                        :value="props.haveAddresses"
-                                        @input="props.clearAddresses"
-                                        @select="props.select"
-                                    >
-                                    </postcode-modal>
-                                </template>
-
-                                <template slot-scope="props">
-                                    <div class="user__field">
-                                        <label for="addressCompany">@lang('Company')</label>
-                                        <input id="addressCompany" type="text" v-model="props.address.company" :disabled="!canEditShipping">
-                                        <v-form-error field="checkout.billing.company"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order1">
-                                        <label for="addressAddress" class="label--required">@lang('Address')</label>
-                                        <input id="addressAddress" type="text" v-model="props.address.address" :disabled="!canEditShipping" required>
-                                        <v-form-error field="checkout.billing.address"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order2">
-                                        <label for="addressAddress2">@lang('Address 2')</label>
-                                        <input id="addressAddress2" type="text" v-model="props.address.address_2" :disabled="!canEditShipping">
-                                        <v-form-error field="checkout.billing.address_2"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order3">
-                                        <label for="addressAddress3">@lang('Address 3')</label>
-                                        <input id="addressAddress3" type="text" v-model="props.address.address_3" :disabled="!canEditShipping">
-                                        <v-form-error field="checkout.billing.address_3"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order4">
-                                        <label for="addressCity" class="label--required">@lang('City')</label>
-                                        <input id="addressCity" type="text" v-model="props.address.address_city" :disabled="!canEditShipping" required>
-                                        <v-form-error field="checkout.billing.address_city"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order1">
-                                        <label for="addressCounty">@lang('County')</label>
-                                        <input id="addressCounty" type="text" v-model="props.address.address_county" :disabled="!canEditShipping" required>
-                                        <v-form-error field="checkout.billing.address_county"></v-form-error>
-                                    </div>
-                                    <div class="user__field user__field--half user__field--postcode sort-order2">
-                                        <label for="addressPostcode" class="label--required">@lang('Post code')</label>
-                                        <input id="addressPostcode" type="text" v-model="props.address.address_postcode" :disabled="!canEditShipping" required>
-                                        <v-form-error field="checkout.billing.address_postcode"></v-form-error>
-                                        <button @click.prevent="props.changeAddress">Change address</button>
-                                    </div>
-                                    <div class="user__field user__field--half sort-order3 user__field--country">
-                                        <label for="addressCountry" class="label--required">@lang('Country')</label>
-                                        <div class="select">
-                                            <select v-model="props.address.address_country" id="addressCountry" :disabled="!canEditShipping" required>
-                                                <option selected disabled>Please select</option>
-                                                @foreach (Maxfactor::countries() as $code => $item)
-                                                    <option value="{{ $code }}">{{ $item }}</option>
-                                                @endforeach
-                                            </select>
+                                    <template slot-scope="props">
+                                        <div class="user__field">
+                                            <label for="addressCompany">@lang('Company')</label>
+                                            <input id="addressCompany" type="text" v-model="props.address.company" :disabled="!canEditShipping">
+                                            <v-form-error field="checkout.billing.company"></v-form-error>
                                         </div>
-                                        <v-form-error field="checkout.billing.address_country"></v-form-error>
-                                    </div>
-                                </template>
-                            </mx-address>
+                                        <div class="user__field user__field--half sort-order1">
+                                            <label for="addressAddress" class="label--required">@lang('Address')</label>
+                                            <input id="addressAddress" type="text" v-model="props.address.address" :disabled="!canEditShipping" required>
+                                            <v-form-error field="checkout.billing.address"></v-form-error>
+                                        </div>
+                                        <div class="user__field user__field--half sort-order2">
+                                            <label for="addressAddress2">@lang('Address 2')</label>
+                                            <input id="addressAddress2" type="text" v-model="props.address.address_2" :disabled="!canEditShipping">
+                                            <v-form-error field="checkout.billing.address_2"></v-form-error>
+                                        </div>
+                                        <div class="user__field user__field--half sort-order3">
+                                            <label for="addressAddress3">@lang('Address 3')</label>
+                                            <input id="addressAddress3" type="text" v-model="props.address.address_3" :disabled="!canEditShipping">
+                                            <v-form-error field="checkout.billing.address_3"></v-form-error>
+                                        </div>
+                                        <div class="user__field user__field--half sort-order4">
+                                            <label for="addressCity" class="label--required">@lang('City')</label>
+                                            <input id="addressCity" type="text" v-model="props.address.address_city" :disabled="!canEditShipping" required>
+                                            <v-form-error field="checkout.billing.address_city"></v-form-error>
+                                        </div>
+                                        <div class="user__field user__field--half sort-order1">
+                                            <label for="addressCounty">@lang('County')</label>
+                                            <input id="addressCounty" type="text" v-model="props.address.address_county" :disabled="!canEditShipping" required>
+                                            <v-form-error field="checkout.billing.address_county"></v-form-error>
+                                        </div>
+                                        <div class="user__field user__field--half user__field--postcode sort-order2">
+                                            <label for="addressPostcode" class="label--required">@lang('Post code')</label>
+                                            <input id="addressPostcode" type="text" v-model="props.address.address_postcode" :disabled="!canEditShipping" required>
+                                            <v-form-error field="checkout.billing.address_postcode"></v-form-error>
+                                            <button @click.prevent="props.changeAddress">Change address</button>
+                                        </div>
+                                        <div class="user__field user__field--half sort-order3 user__field--country">
+                                            <label for="addressCountry" class="label--required">@lang('Country')</label>
+                                            <div class="select">
+                                                <select v-model="props.address.address_country" id="addressCountry" :disabled="!canEditShipping" required>
+                                                    <option selected disabled>Please select</option>
+                                                    @foreach (Maxfactor::countries() as $code => $item)
+                                                        <option value="{{ $code }}">{{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <v-form-error field="checkout.billing.address_country"></v-form-error>
+                                        </div>
+                                    </template>
+                                </mx-address>
 
-                        </div>
+                            </div>
+                        </template>
                     </template>
 
                     @component('maxfactor::checkout.components.actions')

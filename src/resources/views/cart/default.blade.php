@@ -38,6 +38,7 @@
                 </div>
                 <div class="cart__continue">
                     <h3>@lang('Net total:') @{{ cartNetTotal | money}}</h3>
+                    <h3 v-if="cartDiscountTotal > 0">@lang('Discount applied:') @{{ cartDiscountTotal | money}}</h3>
                     <h3>@lang('Tax total:') @{{ cartTaxTotal | money | default(' N/A') }}</h3>
                     <h3>@lang('Sub total:') @{{ cartSubTotal | money }}</h3>
                     <span>@lang('maxfactor::checkout.postage_at_checkout')</span>
