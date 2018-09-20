@@ -24,6 +24,7 @@
                 <div class="checkout__left-content">
                     <div class="checkout__customer-info">
                         <h3>@lang('Delivery')</h3>
+                        @{{ cartCollection.discount.delivery_message  }}
                         @foreach ($postageOptions as $postageOption)
                             <div class="checkout__shipping-option">
                                 <input type="radio" name="shipping" 
