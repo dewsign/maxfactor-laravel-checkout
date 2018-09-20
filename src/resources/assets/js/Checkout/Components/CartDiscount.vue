@@ -48,7 +48,7 @@
                 this.getForm(`/cart/discount/${this.currentCode}`)
                     .then((response) => {
                         if (response.data.code) {
-                            this.message = 'Discount applied'
+                            this.message = response.data.applied_message
                             this.currentCheckout.discount = response.data
                         }
                     }).catch(() => console.log('The discount code could not be verified'))
