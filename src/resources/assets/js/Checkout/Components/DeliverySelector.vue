@@ -13,7 +13,14 @@
                 v-for="date in dateRange"
                 :key=date.name
             >
-                <button class="button" :disabled="!getDelivery(date)">{{ formatDate(date) }}{{ formatPrice(getDelivery(date)['price']) }}</button>
+                <button
+                    class="button"
+                    :disabled="!getDelivery(date)"
+                    v-on:click.prevent="updatePostage(getDelivery(date))"
+                >
+                    {{ formatDate(date) }}
+                    {{ formatPrice(getDelivery(date)['price']) }}
+                </button>
             </li>
         </ul>
     </div>
@@ -147,6 +154,15 @@
                 const shortMonth = date.toLocaleDateString("en-US", { month: 'short' })
 
                 return this.getOrdinal(date.getDate()) + ' ' + shortMonth
+            },
+
+            /**
+             * Update postage when an option is clicked
+             *
+             * @return {String}
+             */
+            updatePostage(shippingMethod) {
+                this.$set(this.cartCollection, 'shippingMethod', shippingMethod)
             },
         },
     }
