@@ -10,25 +10,30 @@
             </div>
         </div>
 
-        <div class="checkout__delivery-grid">
+        <div class="checkout__selector-window">
             <div
-                v-for="week in dateRange"
-                class="checkout__week"
+                v-for="month in dateRange"
+                class="checkout__delivery-grid"
             >
                 <div
-                    v-for="date in week"
-                    :key=date.name
-                    class="checkout__option"
+                    v-for="week in month"
+                    class="checkout__week"
                 >
-                    <button
-                        v-bind:class="{ selected: isSelected(date) }"
-                        :disabled="!getDelivery(date)"
-                        v-on:click.prevent="updatePostage(getDelivery(date))"
+                    <div
+                        v-for="date in week"
+                        :key=date.name
+                        class="checkout__option"
                     >
-                        <span>{{ formatDate(date)['day'] }}</span>
-                        <span>{{ formatDate(date)['month'] }}</span>
-                        <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
-                    </button>
+                        <button
+                            v-bind:class="{ selected: isSelected(date) }"
+                            :disabled="!getDelivery(date)"
+                            v-on:click.prevent="updatePostage(getDelivery(date))"
+                        >
+                            <span>{{ formatDate(date)['day'] }}</span>
+                            <span>{{ formatDate(date)['month'] }}</span>
+                            <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,6 +61,7 @@
         data() {
             return {
                 days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+                rangeIndex: 0,
             }
         },
 
@@ -66,7 +72,7 @@
              * @return {Array}
              */
             dayNames() {
-                return this.dateRange[0].map(o => this.days[o.getDay()])
+                return this.dateRange[0][0].map(o => this.days[o.getDay()])
             },
 
             /**
@@ -81,15 +87,21 @@
                 let currentDate = startDate
                 let rangeOfDates = new Array()
                 let weekRange = new Array()
+                let monthRange = new Array()
 
                 while (currentDate <= endDate) {
-                    for (var i = 0; i < 7; i++) {
+                    for (var i = 0; i < 28; i++) {
                         weekRange.push(currentDate)
                         currentDate = this.addDay(currentDate)
-                    }
-                    rangeOfDates.push(weekRange)
 
-                    weekRange = new Array()
+                        if (i % 7 === 6) {
+                            monthRange.push(weekRange)
+                            weekRange = new Array()
+                        }
+                    }
+
+                    rangeOfDates.push(monthRange)
+                    monthRange = new Array()
                 }
 
                 return rangeOfDates
