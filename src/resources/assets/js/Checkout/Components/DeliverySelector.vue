@@ -1,28 +1,41 @@
 <template>
-    <div class="delivery">
-        <ul class="headings">
-            <li
+    <div class="checkout__delivery-selector">
+        <div class="checkout__headings">
+            <div
                 v-for="day in dayNames"
                 :key=day
+                class="heading"
             >
                 {{ day }}
-            </li>
-        </ul>
-        <ul>
-            <li
-                v-for="date in dateRange"
-                :key=date.name
+            </div>
+        </div>
+
+        <div class="checkout__delivery-grid">
+            <div
+                v-for="week in dateRange"
+                class="checkout__week"
             >
-                <button
-                    class="button"
-                    :disabled="!getDelivery(date)"
-                    v-on:click.prevent="updatePostage(getDelivery(date))"
+                <div
+                    v-for="date in week"
+                    :key=date.name
+                    class="checkout__option"
                 >
-                    {{ formatDate(date) }}
-                    {{ formatPrice(getDelivery(date)['price']) }}
-                </button>
-            </li>
-        </ul>
+                    <button
+                        v-bind:class="{ selected: isSelected(date) }"
+                        :disabled="!getDelivery(date)"
+                        v-on:click.prevent="updatePostage(getDelivery(date))"
+                    >
+                        <span>{{ formatDate(date)['day'] }}</span>
+                        <span>{{ formatDate(date)['month'] }}</span>
+                        <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
+            You've selected delivery on <span>{{ selectedDelivery }}</span>
+        </div>
     </div>
 </template>
 
@@ -42,7 +55,7 @@
         
         data() {
             return {
-                days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
             }
         },
 
@@ -53,7 +66,7 @@
              * @return {Array}
              */
             dayNames() {
-                return this.dateRange.slice(0, 7).map(o => this.days[o.getDay()])
+                return this.dateRange[0].map(o => this.days[o.getDay()])
             },
 
             /**
@@ -66,14 +79,19 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-
                 let rangeOfDates = new Array()
+                let weekRange = new Array()
 
                 while (currentDate <= endDate) {
-                    rangeOfDates.push(currentDate)
-                    currentDate = this.addDay(currentDate)
+                    for (var i = 0; i < 7; i++) {
+                        weekRange.push(currentDate)
+                        currentDate = this.addDay(currentDate)
+                    }
+                    rangeOfDates.push(weekRange)
+
+                    weekRange = new Array()
                 }
-                
+
                 return rangeOfDates
             },
 
@@ -84,7 +102,20 @@
              */
             localeDates() {
                 return this.dates.map(o => o['localeDate'])
-            }
+            },
+
+            /**
+             * Return list of localised dates
+             *
+             * @return {Array}
+             */
+            selectedDelivery() {
+                if (this.cartCollection.shippingMethod.name) {
+                    return this.cartCollection.shippingMethod.name
+                }
+
+                return false
+            },
         },
 
         methods: {
@@ -148,12 +179,12 @@
             /**
              * Format a date to display on front end
              *
-             * @return {String}
+             * @return {Array}
              */
             formatDate(date) {
-                const shortMonth = date.toLocaleDateString("en-US", { month: 'short' })
+                const shortMonth = date.toLocaleDateString("en-UK", { month: 'short' })
 
-                return this.getOrdinal(date.getDate()) + ' ' + shortMonth
+                return { 'day': this.getOrdinal(date.getDate()), 'month': shortMonth }
             },
 
             /**
@@ -164,6 +195,17 @@
             updatePostage(shippingMethod) {
                 this.$set(this.cartCollection, 'shippingMethod', shippingMethod)
             },
+
+            /**
+             * Check if a postage option is selected
+             *
+             * @return {String}
+             */
+            isSelected(postageOption) {
+                const inputDate = new Date(postageOption).toLocaleDateString()
+
+                return inputDate === this.cartCollection.shippingMethod.localeDate
+            }
         },
     }
 </script>
