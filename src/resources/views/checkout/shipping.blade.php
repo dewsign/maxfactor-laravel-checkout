@@ -29,6 +29,8 @@
                             :dates="{{ json_encode($postageOptions) }}"
                         ></mx-delivery>
                     </div>
+                    
+                    <v-form-error field="id"></v-form-error>
                     @component('maxfactor::checkout.components.actions')
                         @slot('continueLabel', __('Continue to payment'))
                         @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'payment']))
