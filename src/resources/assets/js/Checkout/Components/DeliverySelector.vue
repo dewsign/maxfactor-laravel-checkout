@@ -41,8 +41,8 @@
         </div>
         
         <div class="checkout__delivery-controls" v-if="!this.disablePrevControl || !this.disableNextControl">
-            <button class="previous" v-on:click.prevent="decDeliveryRange" :disabled="this.disablePrevControl">Previous</button>
-            <button class="next" v-on:click.prevent="incDeliveryRange" :disabled="this.disableNextControl">Show more</button>
+            <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
+            <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
         </div>
         
         <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
@@ -136,18 +136,39 @@
                 return false
             },
 
+            /**
+             * Get distance to translate date ranges
+             *
+             * @return {Object}
+             */
             getRangeTranslation() {
                 return { transform: 'translateX(' + this.rangeIndex*-100 + '%)' }
             },
 
+            /**
+             * Maximum index for date ranges
+             * Think of this as max index of 'months'
+             *
+             * @return {Integer}
+             */
             maxRangeIndex() {
                 return this.dateRange.length - 1
             },
 
+            /**
+             * Should the next dates control be disabled
+             *
+             * @return {Boolean}
+             */
             disableNextControl() {
                 return this.rangeIndex >= this.maxRangeIndex
             },
 
+            /**
+             * Should the prev dates control be disabled
+             *
+             * @return {Boolean}
+             */
             disablePrevControl() {
                 return this.rangeIndex <= 0
             }
@@ -242,13 +263,23 @@
                 return inputDate === this.cartCollection.shippingMethod.localeDate
             },
 
-            incDeliveryRange() {
+            /**
+             * Increase the range index
+             *
+             * @return {Void}
+             */
+            incRangeIndex() {
                 if (this.rangeIndex < this.maxRangeIndex) {
                     this.rangeIndex++
                 }
             },
 
-            decDeliveryRange() {
+            /**
+             * Decrease the range index
+             *
+             * @return {Void}
+             */
+            decRangeIndex() {
                 if (this.rangeIndex > 0) {
                     this.rangeIndex--
                 }
