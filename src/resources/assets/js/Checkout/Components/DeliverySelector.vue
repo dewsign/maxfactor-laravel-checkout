@@ -14,6 +14,7 @@
             <div
                 v-for="month in dateRange"
                 class="checkout__delivery-grid"
+                :style="getRangeTranslation"
             >
                 <div
                     v-for="week in month"
@@ -25,6 +26,7 @@
                         class="checkout__option"
                     >
                         <button
+                            class="button-option"
                             v-bind:class="{ selected: isSelected(date) }"
                             :disabled="!getDelivery(date)"
                             v-on:click.prevent="updatePostage(getDelivery(date))"
@@ -37,7 +39,12 @@
                 </div>
             </div>
         </div>
-
+        
+        <div class="checkout__delivery-controls" v-if="!this.disablePrevControl || !this.disableNextControl">
+            <button class="previous" v-on:click.prevent="decDeliveryRange" :disabled="this.disablePrevControl">Previous</button>
+            <button class="next" v-on:click.prevent="incDeliveryRange" :disabled="this.disableNextControl">Show more</button>
+        </div>
+        
         <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
             You've selected delivery on <span>{{ selectedDelivery }}</span>
         </div>
@@ -128,6 +135,22 @@
 
                 return false
             },
+
+            getRangeTranslation() {
+                return { transform: 'translateX(' + this.rangeIndex*-100 + '%)' }
+            },
+
+            maxRangeIndex() {
+                return this.dateRange.length - 1
+            },
+
+            disableNextControl() {
+                return this.rangeIndex >= this.maxRangeIndex
+            },
+
+            disablePrevControl() {
+                return this.rangeIndex <= 0
+            }
         },
 
         methods: {
@@ -217,7 +240,19 @@
                 const inputDate = new Date(postageOption).toLocaleDateString()
 
                 return inputDate === this.cartCollection.shippingMethod.localeDate
-            }
+            },
+
+            incDeliveryRange() {
+                if (this.rangeIndex < this.maxRangeIndex) {
+                    this.rangeIndex++
+                }
+            },
+
+            decDeliveryRange() {
+                if (this.rangeIndex > 0) {
+                    this.rangeIndex--
+                }
+            },
         },
     }
 </script>
