@@ -1,52 +1,68 @@
 <template>
     <div class="checkout__delivery-selector">
-        <div class="checkout__headings">
-            <div
-                v-for="day in dayNames"
-                :key=day
-                class="heading"
-            >
-                {{ day }}
-            </div>
-        </div>
-
-        <div class="checkout__selector-window">
-            <div
-                v-for="month in dateRange"
-                class="checkout__delivery-grid"
-                :style="getRangeTranslation"
-            >
+        <div class="checkout__delivery-selector-desktop">
+            <div class="checkout__headings">
                 <div
-                    v-for="week in month"
-                    class="checkout__week"
+                    v-for="day in dayNames"
+                    :key=day
+                    class="heading"
+                >
+                    {{ day }}
+                </div>
+            </div>
+
+            <div class="checkout__selector-window">
+                <div
+                    v-for="month in dateRange"
+                    class="checkout__delivery-grid"
+                    :style="getRangeTranslation"
                 >
                     <div
-                        v-for="date in week"
-                        :key=date.name
-                        class="checkout__option"
+                        v-for="week in month"
+                        class="checkout__week"
                     >
-                        <button
-                            class="button-option"
-                            v-bind:class="{ selected: isSelected(date) }"
-                            :disabled="!getDelivery(date)"
-                            v-on:click.prevent="updatePostage(getDelivery(date))"
+                        <div
+                            v-for="date in week"
+                            :key=date.name
+                            class="checkout__option"
                         >
-                            <span>{{ formatDate(date)['day'] }}</span>
-                            <span>{{ formatDate(date)['month'] }}</span>
-                            <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
-                        </button>
+                            <button
+                                class="button-option"
+                                v-bind:class="{ selected: isSelected(date) }"
+                                :disabled="!getDelivery(date)"
+                                v-on:click.prevent="updatePostage(getDelivery(date))"
+                            >
+                                <span>{{ formatDate(date)['day'] }}</span>
+                                <span>{{ formatDate(date)['month'] }}</span>
+                                <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="checkout__delivery-controls" v-if="!this.disablePrevControl || !this.disableNextControl">
+                <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
+                <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
+            </div>
+            
+            <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
+                You've selected delivery on <span>{{ selectedDelivery }}</span>
+            </div>
         </div>
-        
-        <div class="checkout__delivery-controls" v-if="!this.disablePrevControl || !this.disableNextControl">
-            <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
-            <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
-        </div>
-        
-        <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
-            You've selected delivery on <span>{{ selectedDelivery }}</span>
+
+        <div class="checkout__delivery-selector-mobile">
+            <h4>When would you like your delivery?</h4>
+            <select v-model="mobileSelect">
+                <option disabled value="">Select your delivery date</option>
+                <option
+                    v-for="date in flatDateRange"
+                    :disabled="!getDelivery(date)"
+                    :value="getDelivery(date)"
+                >
+                    {{ getMobileOption(date) }}
+                </option>
+            </select>
         </div>
     </div>
 </template>
@@ -67,9 +83,25 @@
         
         data() {
             return {
-                days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 rangeIndex: 0,
+                mobileSelect: [],
             }
+        },
+
+        watch: {
+            mobileSelect: {
+                handler() {
+                    if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
+                        this.mobileSelect = this.cartCollection.shippingMethod
+                        console.log('here')
+                    } else {
+                        this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
+                    }
+
+                },
+                immediate: true,
+            },
         },
 
         computed: {
@@ -84,6 +116,7 @@
 
             /**
              * Return list of all dates between start and end delivery date
+             * Grouped for display 
              *
              * @return {Array}
              */
@@ -112,6 +145,26 @@
                 }
 
                 return rangeOfDates
+            },
+
+            /**
+             * Return flat list of all dates between start and end delivery date
+             *
+             * @return {Array}
+             */
+            flatDateRange() {
+                const startDate = new Date(this.dates[0].date)
+                const endDate = new Date(this.dates[this.dates.length - 1].date)
+
+                let currentDate = startDate
+                let flatRange = new Array()
+
+                while (currentDate <= endDate) {
+                    flatRange.push(currentDate)
+                    currentDate = this.addDay(currentDate)
+                }
+
+                return flatRange
             },
 
             /**
@@ -211,6 +264,12 @@
                 return false
             },
 
+            getMobileOption(date) {
+                const deliveryOption = this.getDelivery(date)
+
+                return this.formatDate(date)['mobile'] + ' - ' + this.formatPrice(deliveryOption.price)
+            },
+
             /**
              * Format a price to display on front end
              *
@@ -239,8 +298,9 @@
              */
             formatDate(date) {
                 const shortMonth = date.toLocaleDateString("en-UK", { month: 'short' })
+                const mobile = this.days[date.getDay()] + ' ' + this.getOrdinal(date.getDate()) + ' ' + shortMonth
 
-                return { 'day': this.getOrdinal(date.getDate()), 'month': shortMonth }
+                return { 'day': this.getOrdinal(date.getDate()), 'month': shortMonth, 'mobile': mobile }
             },
 
             /**
