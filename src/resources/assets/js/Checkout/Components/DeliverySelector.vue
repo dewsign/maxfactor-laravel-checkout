@@ -1,7 +1,7 @@
 <template>
-    <div class="checkout__delivery-selector">
-        <div class="checkout__delivery-selector-desktop">
-            <div class="checkout__headings">
+    <div class="delivery-selector">
+        <div class="delivery-selector__desktop">
+            <div class="delivery-selector__headings">
                 <div
                     v-for="day in dayNames"
                     :key=day
@@ -11,20 +11,20 @@
                 </div>
             </div>
 
-            <div class="checkout__selector-window">
+            <div class="delivery-selector__selection-window">
                 <div
                     v-for="month in dateRange"
-                    class="checkout__delivery-grid"
+                    class="delivery-selector__delivery-grid"
                     :style="getRangeTranslation"
                 >
                     <div
                         v-for="week in month"
-                        class="checkout__week"
+                        class="delivery-selector__week"
                     >
                         <div
                             v-for="date in week"
                             :key=date.name
-                            class="checkout__option"
+                            class="delivery-selector__option"
                         >
                             <button
                                 class="button-option"
@@ -34,35 +34,37 @@
                             >
                                 <span>{{ formatDate(date)['day'] }}</span>
                                 <span>{{ formatDate(date)['month'] }}</span>
-                                <span class="checkout__delivery-price">{{ formatPrice(getDelivery(date)['price']) }}</span>
+                                <span class="price">{{ formatPrice(getDelivery(date)['price']) }}</span>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="checkout__delivery-controls" v-if="!this.disablePrevControl || !this.disableNextControl">
+            <div class="delivery-selector__controls" v-if="!this.disablePrevControl || !this.disableNextControl">
                 <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
                 <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
             </div>
             
-            <div class="checkout__delivery-confirmation" v-if="selectedDelivery">
+            <div class="delivery-selector__confirmation" v-if="selectedDelivery">
                 You've selected delivery on <span>{{ selectedDelivery }}</span>
             </div>
         </div>
 
-        <div class="checkout__delivery-selector-mobile">
+        <div class="delivery-selector__mobile">
             <h4>When would you like your delivery?</h4>
-            <select v-model="mobileSelect">
-                <option disabled value="">Select your delivery date</option>
-                <option
-                    v-for="date in flatDateRange"
-                    :disabled="!getDelivery(date)"
-                    :value="getDelivery(date)"
-                >
-                    {{ getMobileOption(date) }}
-                </option>
-            </select>
+            <div class="delivery-selector__select-wrapper">
+                <select v-model="mobileSelect">
+                    <option disabled value="default">Select your delivery date</option>
+                    <option
+                        v-for="date in flatDateRange"
+                        :disabled="!getDelivery(date)"
+                        :value="getDelivery(date)"
+                    >
+                        {{ getMobileOption(date) }}
+                    </option>
+                </select>
+            </div>
         </div>
     </div>
 </template>
@@ -85,20 +87,21 @@
             return {
                 days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 rangeIndex: 0,
-                mobileSelect: [],
+                mobileSelect: 'default',
             }
         },
 
         watch: {
             mobileSelect: {
                 handler() {
+                    // If shipping method is set in cart and not data, update data
                     if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
                         this.mobileSelect = this.cartCollection.shippingMethod
-                        console.log('here')
-                    } else {
+                    }
+                    
+                    if (this.mobileSelect.date) {
                         this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
                     }
-
                 },
                 immediate: true,
             },
@@ -239,7 +242,6 @@
 
             /**
              * Add a day to date
-             * TODO: refactor to a helper package
              *
              * @return {Date}
              */
@@ -264,6 +266,11 @@
                 return false
             },
 
+            /**
+             * Get delivery option in format required for mobile
+             *
+             * @return {Date}
+             */
             getMobileOption(date) {
                 const deliveryOption = this.getDelivery(date)
 
