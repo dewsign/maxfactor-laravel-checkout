@@ -1,6 +1,5 @@
 <div class="checkout__summary">    
     <div class="checkout__discount-error" v-if="currentCheckout.discount.error">
-        @lang('Discount invalid:')
         <span>@{{ currentCheckout.discount.error }}</span>
     </div>
     <div class="checkout__subtotal">
