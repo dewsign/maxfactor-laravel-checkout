@@ -246,7 +246,7 @@
              * @return {Date}
              */
             addDay(date) {
-                var result = new Date(date)
+                const result = new Date(date)
                 result.setDate(result.getDate() + 1)
                 return result
             },
