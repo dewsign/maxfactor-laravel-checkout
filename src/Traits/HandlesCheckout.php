@@ -185,7 +185,7 @@ trait HandlesCheckout
 
         Validator::make(Request::get('checkout')['shippingMethod'], [
             'id' => 'required|integer|min:1',
-        ])->validate();
+        ], ['id.*' => 'Please select a delivery date'])->validate();
 
         if (App::environment(['local', 'staging', 'testing'])) {
             Session::put('dusk_vars', ['finalTotal' => floatval($this->getFirst('finalTotal'))]);
