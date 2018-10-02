@@ -27,19 +27,12 @@
                         <div v-if="cartCollection.discount.delivery_message" class="checkout__delivery-message">
                             @{{ cartCollection.discount.delivery_message }}
                         </div>
-                        @foreach ($postageOptions as $postageOption)
-                            <div class="checkout__shipping-option">
-                                <input type="radio" name="shipping" 
-                                    :value='{!! json_encode($postageOption) !!}' 
-                                    v-model="cartCollection.shippingMethod"
-                                    id="shipping{{ ucfirst(str_slug($postageOption['name'], '')) }}"
-                                >
-                                <label for="shipping{{ ucfirst(str_slug($postageOption['name'], '')) }}">{{ $postageOption['name'] }}</label>
-                                <span>&pound; {{ Format::money($postageOption['price'], $postageOption['poa'] ? 'TBC' : 'Free') }}</span>
-                            </div>
-                        @endforeach
-                        <v-form-error field="id"></v-form-error>
+                        <mx-delivery
+                            :dates="{{ json_encode($postageOptions) }}"
+                        ></mx-delivery>
                     </div>
+                    
+                    <v-form-error field="id"></v-form-error>
                     @component('maxfactor::checkout.components.actions')
                         @slot('continueLabel', __('Continue to payment'))
                         @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'payment']))
