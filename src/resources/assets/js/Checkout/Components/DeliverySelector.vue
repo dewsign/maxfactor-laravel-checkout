@@ -13,16 +13,19 @@
 
             <div class="delivery-selector__selection-window">
                 <div
-                    v-for="month in dateRange"
+                    v-for="(month, index) in dateRange"
+                    :key="`month-${index}`"
                     :style="getRangeTranslation"
                     class="delivery-selector__delivery-grid"
                 >
                     <div
-                        v-for="week in month"
+                        v-for="(week, index) in month"
+                        :key="`week-${index}`"
                         class="delivery-selector__week"
                     >
                         <div
-                            v-for="date in week"
+                            v-for="(date, index) in week"
+                            :key="`date-${index}`"
                             class="delivery-selector__option"
                         >
                             <button
@@ -75,7 +78,8 @@
                         value="default"
                     >Select your delivery date</option>
                     <option
-                        v-for="date in flatDateRange"
+                        v-for="(date, index) in flatDateRange"
+                        :key="`date-${index}`"
                         :disabled="!getDelivery(date)"
                         :value="getDelivery(date)"
                     >
