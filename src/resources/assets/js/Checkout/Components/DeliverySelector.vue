@@ -14,8 +14,8 @@
             <div class="delivery-selector__selection-window">
                 <div
                     v-for="month in dateRange"
-                    class="delivery-selector__delivery-grid"
                     :style="getRangeTranslation"
+                    class="delivery-selector__delivery-grid"
                 >
                     <div
                         v-for="week in month"
@@ -34,19 +34,35 @@
                             >
                                 <span>{{ formatDate(date)['day'] }}</span>
                                 <span>{{ formatDate(date)['month'] }}</span>
-                                <span class="price">{{ formatPrice(getDelivery(date)['price']) }}</span>
+                                <span class="price">
+                                    {{ formatPrice(getDelivery(date)['price']) }}
+                                </span>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="delivery-selector__controls" v-if="!this.disablePrevControl || !this.disableNextControl">
-                <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
-                <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
+
+            <div
+                v-if="!disablePrevControl || !disableNextControl"
+                class="delivery-selector__controls"
+            >
+                <button
+                    :disabled="disablePrevControl"
+                    class="previous"
+                    @click.prevent="decRangeIndex"
+                >Previous</button>
+                <button
+                    :disabled="disableNextControl"
+                    class="next"
+                    @click.prevent="incRangeIndex"
+                >Show more</button>
             </div>
-            
-            <div class="delivery-selector__confirmation" v-if="selectedDelivery">
+
+            <div
+                v-if="selectedDelivery"
+                class="delivery-selector__confirmation"
+            >
                 You've selected delivery on <span>{{ selectedDelivery }}</span>
             </div>
         </div>
