@@ -98,7 +98,7 @@
                 required: true,
             },
         },
-        
+
         data() {
             return {
                 days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
