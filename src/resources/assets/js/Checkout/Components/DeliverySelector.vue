@@ -128,12 +128,12 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-                let rangeOfDates = []
+                const rangeOfDates = []
                 let weekRange = []
                 let monthRange = []
 
                 while (currentDate <= endDate) {
-                    for (let i = 0; i < 28; i++) {
+                    for (let i = 0; i < 28; i += 1) {
                         weekRange.push(currentDate)
                         currentDate = this.addDay(currentDate)
 
@@ -358,7 +358,7 @@
              */
             incRangeIndex() {
                 if (this.rangeIndex < this.maxRangeIndex) {
-                    this.rangeIndex = this.rangeIndex + 1
+                    this.rangeIndex += 1
                 }
             },
 
@@ -369,7 +369,7 @@
              */
             decRangeIndex() {
                 if (this.rangeIndex > 0) {
-                    this.rangeIndex = this.rangeIndex - 1
+                    this.rangeIndex -= 1
                 }
             },
         },
