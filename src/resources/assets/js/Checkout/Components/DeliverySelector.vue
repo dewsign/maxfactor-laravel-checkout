@@ -71,7 +71,10 @@
             <h4>When would you like your delivery?</h4>
             <div class="delivery-selector__select-wrapper">
                 <select v-model="mobileSelect">
-                    <option disabled value="default">Select your delivery date</option>
+                    <option
+                        disabled
+                        value="default"
+                    >Select your delivery date</option>
                     <option
                         v-for="date in flatDateRange"
                         :disabled="!getDelivery(date)"
@@ -198,7 +201,8 @@
              * @return {Object}
              */
             getRangeTranslation() {
-                return { transform: 'translateX(' + this.rangeIndex*-100 + '%)' }
+                const transalation = -100
+                return { transform: `translateX(${this.rangeIndex * transalation}%)` }
             },
 
             /**
@@ -291,7 +295,7 @@
             getMobileOption(date) {
                 const deliveryOption = this.getDelivery(date)
 
-                return this.formatDate(date)['mobile'] + ' - ' + this.formatPrice(deliveryOption.price)
+                return `${this.formatDate(date).mobile} - ${this.formatPrice(deliveryOption.price)}`
             },
 
             /**
@@ -322,7 +326,7 @@
              */
             formatDate(date) {
                 const shortMonth = date.toLocaleDateString('en-UK', { month: 'short' })
-                const mobileString = this.days[date.getDay()] + ' ' + this.getOrdinal(date.getDate()) + ' ' + shortMonth
+                const mobileString = `${this.days[date.getDay()]} ${this.getOrdinal(date.getDate())} ${shortMonth}`
 
                 return {
                     day: this.getOrdinal(date.getDate()),
