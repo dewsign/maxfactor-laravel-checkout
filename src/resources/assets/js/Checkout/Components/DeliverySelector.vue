@@ -4,7 +4,7 @@
             <div class="delivery-selector__headings">
                 <div
                     v-for="day in dayNames"
-                    :key=day
+                    :key="day"
                     class="heading"
                 >
                     {{ day }}
@@ -23,14 +23,14 @@
                     >
                         <div
                             v-for="date in week"
-                            :key=date.name
+                            :key="date.name"
                             class="delivery-selector__option"
                         >
                             <button
-                                class="button-option"
-                                v-bind:class="{ selected: isSelected(date) }"
                                 :disabled="!getDelivery(date)"
-                                v-on:click.prevent="updatePostage(getDelivery(date))"
+                                :class="{ selected: isSelected(date) }"
+                                class="button-option"
+                                @click.prevent="updatePostage(getDelivery(date))"
                             >
                                 <span>{{ formatDate(date)['day'] }}</span>
                                 <span>{{ formatDate(date)['month'] }}</span>
@@ -91,22 +91,6 @@
             }
         },
 
-        watch: {
-            mobileSelect: {
-                handler() {
-                    // If shipping method is set in cart and not data, update data
-                    if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
-                        this.mobileSelect = this.cartCollection.shippingMethod
-                    }
-                    
-                    if (this.mobileSelect.date) {
-                        this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
-                    }
-                },
-                immediate: true,
-            },
-        },
-
         computed: {
             /**
              * Return list of day names for column headings
@@ -119,7 +103,7 @@
 
             /**
              * Return list of all dates between start and end delivery date
-             * Grouped for display 
+             * Grouped for display
              *
              * @return {Array}
              */
@@ -128,23 +112,23 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-                let rangeOfDates = new Array()
-                let weekRange = new Array()
-                let monthRange = new Array()
+                let rangeOfDates = []
+                let weekRange = []
+                let monthRange = []
 
                 while (currentDate <= endDate) {
-                    for (var i = 0; i < 28; i++) {
+                    for (let i = 0; i < 28; i++) {
                         weekRange.push(currentDate)
                         currentDate = this.addDay(currentDate)
 
                         if (i % 7 === 6) {
                             monthRange.push(weekRange)
-                            weekRange = new Array()
+                            weekRange = []
                         }
                     }
 
                     rangeOfDates.push(monthRange)
-                    monthRange = new Array()
+                    monthRange = []
                 }
 
                 return rangeOfDates
@@ -160,7 +144,7 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-                let flatRange = new Array()
+                const flatRange = []
 
                 while (currentDate <= endDate) {
                     flatRange.push(currentDate)
@@ -176,7 +160,7 @@
              * @return {Array}
              */
             localeDates() {
-                return this.dates.map(o => o['localeDate'])
+                return this.dates.map(o => o.localeDate)
             },
 
             /**
@@ -227,7 +211,23 @@
              */
             disablePrevControl() {
                 return this.rangeIndex <= 0
-            }
+            },
+        },
+
+        watch: {
+            mobileSelect: {
+                handler() {
+                    // If shipping method is set in cart and not data, update data
+                    if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
+                        this.mobileSelect = this.cartCollection.shippingMethod
+                    }
+
+                    if (this.mobileSelect.date) {
+                        this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
+                    }
+                },
+                immediate: true,
+            },
         },
 
         methods: {
@@ -237,7 +237,7 @@
              * @return {String}
              */
             getOrdinal(n) {
-                return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
+                return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '')
             },
 
             /**
@@ -257,10 +257,11 @@
              * @return {Date}
              */
             getDelivery(date) {
-                const inputDate = new Date(date).toLocaleDateString()
+                const inputDate = new Date(date).toLocaleDateString('en-GB').trim()
+
 
                 if (this.localeDates.includes(inputDate)) {
-                    return this.dates.find(date => date.localeDate === inputDate)
+                    return this.dates.find(dates => dates.localeDate === inputDate)
                 }
 
                 return false
@@ -292,10 +293,10 @@
                 }
 
                 return price.toLocaleString('en-GB', {
-                        style: 'currency',
-                        currency: 'GBP',
-                        currencyDisplay: 'symbol',
-                    })
+                    style: 'currency',
+                    currency: 'GBP',
+                    currencyDisplay: 'symbol',
+                })
             },
 
             /**
@@ -304,10 +305,14 @@
              * @return {Array}
              */
             formatDate(date) {
-                const shortMonth = date.toLocaleDateString("en-UK", { month: 'short' })
-                const mobile = this.days[date.getDay()] + ' ' + this.getOrdinal(date.getDate()) + ' ' + shortMonth
+                const shortMonth = date.toLocaleDateString('en-UK', { month: 'short' })
+                const mobileString = this.days[date.getDay()] + ' ' + this.getOrdinal(date.getDate()) + ' ' + shortMonth
 
-                return { 'day': this.getOrdinal(date.getDate()), 'month': shortMonth, 'mobile': mobile }
+                return {
+                    day: this.getOrdinal(date.getDate()),
+                    month: shortMonth,
+                    mobile: mobileString,
+                }
             },
 
             /**
@@ -337,7 +342,7 @@
              */
             incRangeIndex() {
                 if (this.rangeIndex < this.maxRangeIndex) {
-                    this.rangeIndex++
+                    this.rangeIndex = this.rangeIndex + 1
                 }
             },
 
@@ -348,7 +353,7 @@
              */
             decRangeIndex() {
                 if (this.rangeIndex > 0) {
-                    this.rangeIndex--
+                    this.rangeIndex = this.rangeIndex - 1
                 }
             },
         },
