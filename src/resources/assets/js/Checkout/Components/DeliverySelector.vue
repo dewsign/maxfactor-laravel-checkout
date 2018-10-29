@@ -23,7 +23,6 @@
                     >
                         <div
                             v-for="date in week"
-                            :key="date.name"
                             class="delivery-selector__option"
                         >
                             <button
@@ -277,8 +276,7 @@
              * @return {Date}
              */
             getDelivery(date) {
-                const inputDate = new Date(date).toLocaleDateString('en-GB').trim()
-
+                const inputDate = new Date(date).toLocaleDateString('en-GB').replace(/\u200E/g, '')
 
                 if (this.localeDates.includes(inputDate)) {
                     return this.dates.find(dates => dates.localeDate === inputDate)
@@ -325,7 +323,7 @@
              * @return {Array}
              */
             formatDate(date) {
-                const shortMonth = date.toLocaleDateString('en-UK', { month: 'short' })
+                const shortMonth = date.toLocaleDateString('en-UK', { month: 'short' }).replace(/\u200E/g, '')
                 const mobileString = `${this.days[date.getDay()]} ${this.getOrdinal(date.getDate())} ${shortMonth}`
 
                 return {
@@ -350,7 +348,7 @@
              * @return {String}
              */
             isSelected(postageOption) {
-                const inputDate = new Date(postageOption).toLocaleDateString()
+                const inputDate = new Date(postageOption).toLocaleDateString('en-GB').replace(/\u200E/g, '')
 
                 return inputDate === this.cartCollection.shippingMethod.localeDate
             },
