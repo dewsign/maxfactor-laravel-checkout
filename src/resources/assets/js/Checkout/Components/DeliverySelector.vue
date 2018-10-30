@@ -4,7 +4,7 @@
             <div class="delivery-selector__headings">
                 <div
                     v-for="day in dayNames"
-                    :key=day
+                    :key="day"
                     class="heading"
                 >
                     {{ day }}
@@ -12,41 +12,35 @@
             </div>
 
             <div class="delivery-selector__selection-window">
-                <div
-                    v-for="month in dateRange"
-                    class="delivery-selector__delivery-grid"
+                <delivery-month
+                    v-for="(month, index) in dateRange"
+                    :key="`month-${index}`"
+                    :delivery-month="month"
+                    :dates="dates"
                     :style="getRangeTranslation"
-                >
-                    <div
-                        v-for="week in month"
-                        class="delivery-selector__week"
-                    >
-                        <div
-                            v-for="date in week"
-                            :key=date.name
-                            class="delivery-selector__option"
-                        >
-                            <button
-                                class="button-option"
-                                v-bind:class="{ selected: isSelected(date) }"
-                                :disabled="!getDelivery(date)"
-                                v-on:click.prevent="updatePostage(getDelivery(date))"
-                            >
-                                <span>{{ formatDate(date)['day'] }}</span>
-                                <span>{{ formatDate(date)['month'] }}</span>
-                                <span class="price">{{ formatPrice(getDelivery(date)['price']) }}</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                />
             </div>
-            
-            <div class="delivery-selector__controls" v-if="!this.disablePrevControl || !this.disableNextControl">
-                <button class="previous" v-on:click.prevent="decRangeIndex" :disabled="this.disablePrevControl">Previous</button>
-                <button class="next" v-on:click.prevent="incRangeIndex" :disabled="this.disableNextControl">Show more</button>
+
+            <div
+                v-if="!disablePrevControl || !disableNextControl"
+                class="delivery-selector__controls"
+            >
+                <button
+                    :disabled="disablePrevControl"
+                    class="previous"
+                    @click.prevent="decRangeIndex"
+                >Previous</button>
+                <button
+                    :disabled="disableNextControl"
+                    class="next"
+                    @click.prevent="incRangeIndex"
+                >Show more</button>
             </div>
-            
-            <div class="delivery-selector__confirmation" v-if="selectedDelivery">
+
+            <div
+                v-if="selectedDelivery"
+                class="delivery-selector__confirmation"
+            >
                 You've selected delivery on <span>{{ selectedDelivery }}</span>
             </div>
         </div>
@@ -55,14 +49,16 @@
             <h4>When would you like your delivery?</h4>
             <div class="delivery-selector__select-wrapper">
                 <select v-model="mobileSelect">
-                    <option disabled value="default">Select your delivery date</option>
                     <option
-                        v-for="date in flatDateRange"
-                        :disabled="!getDelivery(date)"
-                        :value="getDelivery(date)"
-                    >
-                        {{ getMobileOption(date) }}
-                    </option>
+                        disabled
+                        value="default"
+                    >Select your delivery date</option>
+                    <mobile-delivery-option
+                        v-for="(date, index) in flatDateRange"
+                        :key="`date-${index}`"
+                        :delivery-option="date"
+                        :dates="dates"
+                    />
                 </select>
             </div>
         </div>
@@ -70,56 +66,43 @@
 </template>
 
 <script>
+    import DeliveryMonth from './Delivery/DeliveryMonth.vue'
+    import DeliveryFormatMixin from '../Mixins/DeliveryFormat'
+    import MobileDeliveryOption from './Delivery/MobileDeliveryOption.vue'
+
     export default {
         name: 'DeliverySelector',
 
+        components: {
+            DeliveryMonth,
+            MobileDeliveryOption,
+        },
+
+        mixins: [
+            DeliveryFormatMixin,
+        ],
+
         props: {
             /**
-             * List of delivery dates
+             * List of available delivery dates
              */
             dates: {
                 type: Array,
                 required: true,
             },
         },
-        
+
         data() {
             return {
-                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 rangeIndex: 0,
                 mobileSelect: 'default',
             }
         },
 
-        watch: {
-            mobileSelect: {
-                handler() {
-                    // If shipping method is set in cart and not data, update data
-                    if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
-                        this.mobileSelect = this.cartCollection.shippingMethod
-                    }
-                    
-                    if (this.mobileSelect.date) {
-                        this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
-                    }
-                },
-                immediate: true,
-            },
-        },
-
         computed: {
             /**
-             * Return list of day names for column headings
-             *
-             * @return {Array}
-             */
-            dayNames() {
-                return this.dateRange[0][0].map(o => this.days[o.getDay()])
-            },
-
-            /**
              * Return list of all dates between start and end delivery date
-             * Grouped for display 
+             * Grouped for display
              *
              * @return {Array}
              */
@@ -128,23 +111,23 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-                let rangeOfDates = new Array()
-                let weekRange = new Array()
-                let monthRange = new Array()
+                const rangeOfDates = []
+                let weekRange = []
+                let monthRange = []
 
                 while (currentDate <= endDate) {
-                    for (var i = 0; i < 28; i++) {
+                    for (let i = 0; i < 28; i += 1) {
                         weekRange.push(currentDate)
                         currentDate = this.addDay(currentDate)
 
                         if (i % 7 === 6) {
                             monthRange.push(weekRange)
-                            weekRange = new Array()
+                            weekRange = []
                         }
                     }
 
                     rangeOfDates.push(monthRange)
-                    monthRange = new Array()
+                    monthRange = []
                 }
 
                 return rangeOfDates
@@ -160,7 +143,7 @@
                 const endDate = new Date(this.dates[this.dates.length - 1].date)
 
                 let currentDate = startDate
-                let flatRange = new Array()
+                const flatRange = []
 
                 while (currentDate <= endDate) {
                     flatRange.push(currentDate)
@@ -171,18 +154,9 @@
             },
 
             /**
-             * Return list of localised dates
+             * Get selected delivery option
              *
-             * @return {Array}
-             */
-            localeDates() {
-                return this.dates.map(o => o['localeDate'])
-            },
-
-            /**
-             * Return list of localised dates
-             *
-             * @return {Array}
+             * @return {String | Boolean}
              */
             selectedDelivery() {
                 if (this.cartCollection.shippingMethod.name) {
@@ -190,15 +164,6 @@
                 }
 
                 return false
-            },
-
-            /**
-             * Get distance to translate date ranges
-             *
-             * @return {Object}
-             */
-            getRangeTranslation() {
-                return { transform: 'translateX(' + this.rangeIndex*-100 + '%)' }
             },
 
             /**
@@ -227,19 +192,36 @@
              */
             disablePrevControl() {
                 return this.rangeIndex <= 0
-            }
+            },
+
+            /**
+             * Get distance to translate date ranges
+             *
+             * @return {Object}
+             */
+            getRangeTranslation() {
+                const transalation = -100
+                return { transform: `translateX(${this.rangeIndex * transalation}%)` }
+            },
+        },
+
+        watch: {
+            mobileSelect: {
+                handler() {
+                    // If shipping method is set in cart and not data, update data
+                    if (this.cartCollection.shippingMethod.date && !this.mobileSelect.date) {
+                        this.mobileSelect = this.cartCollection.shippingMethod
+                    }
+
+                    if (this.mobileSelect.date) {
+                        this.$set(this.cartCollection, 'shippingMethod', this.mobileSelect)
+                    }
+                },
+                immediate: true,
+            },
         },
 
         methods: {
-            /**
-             * Get day of week ordinal suffix
-             *
-             * @return {String}
-             */
-            getOrdinal(n) {
-                return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
-            },
-
             /**
              * Add a day to date
              *
@@ -252,92 +234,13 @@
             },
 
             /**
-             * Get delivery option object from date string
-             *
-             * @return {Date}
-             */
-            getDelivery(date) {
-                const inputDate = new Date(date).toLocaleDateString()
-
-                if (this.localeDates.includes(inputDate)) {
-                    return this.dates.find(date => date.localeDate === inputDate)
-                }
-
-                return false
-            },
-
-            /**
-             * Get delivery option in format required for mobile
-             *
-             * @return {Date}
-             */
-            getMobileOption(date) {
-                const deliveryOption = this.getDelivery(date)
-
-                return this.formatDate(date)['mobile'] + ' - ' + this.formatPrice(deliveryOption.price)
-            },
-
-            /**
-             * Format a price to display on front end
-             *
-             * @return {String}
-             */
-            formatPrice(price) {
-                if (typeof price === 'undefined') {
-                    return 'Unavailable'
-                }
-
-                if (price === 0) {
-                    return 'Free'
-                }
-
-                return price.toLocaleString('en-GB', {
-                        style: 'currency',
-                        currency: 'GBP',
-                        currencyDisplay: 'symbol',
-                    })
-            },
-
-            /**
-             * Format a date to display on front end
-             *
-             * @return {Array}
-             */
-            formatDate(date) {
-                const shortMonth = date.toLocaleDateString("en-UK", { month: 'short' })
-                const mobile = this.days[date.getDay()] + ' ' + this.getOrdinal(date.getDate()) + ' ' + shortMonth
-
-                return { 'day': this.getOrdinal(date.getDate()), 'month': shortMonth, 'mobile': mobile }
-            },
-
-            /**
-             * Update postage when an option is clicked
-             *
-             * @return {String}
-             */
-            updatePostage(shippingMethod) {
-                this.$set(this.cartCollection, 'shippingMethod', shippingMethod)
-            },
-
-            /**
-             * Check if a postage option is selected
-             *
-             * @return {String}
-             */
-            isSelected(postageOption) {
-                const inputDate = new Date(postageOption).toLocaleDateString()
-
-                return inputDate === this.cartCollection.shippingMethod.localeDate
-            },
-
-            /**
              * Increase the range index
              *
              * @return {Void}
              */
             incRangeIndex() {
                 if (this.rangeIndex < this.maxRangeIndex) {
-                    this.rangeIndex++
+                    this.rangeIndex += 1
                 }
             },
 
@@ -348,7 +251,7 @@
              */
             decRangeIndex() {
                 if (this.rangeIndex > 0) {
-                    this.rangeIndex--
+                    this.rangeIndex -= 1
                 }
             },
         },
