@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <!-- <div class="delivery-selector__mobile">
+        <div class="delivery-selector__mobile">
             <h4>When would you like your delivery?</h4>
             <div class="delivery-selector__select-wrapper">
                 <select v-model="mobileSelect">
@@ -53,23 +53,27 @@
                         disabled
                         value="default"
                     >Select your delivery date</option>
-                    <option
+                    <mobile-delivery-option
                         v-for="(date, index) in flatDateRange"
                         :key="`date-${index}`"
-                        :disabled="!getDelivery(date)"
-                        :value="getDelivery(date)"
-                    >
-                        {{ getMobileOption(date) }}
-                    </option>
+                        :delivery-option="date"
+                        :dates="dates"
+                    />
                 </select>
             </div>
-        </div> -->
+        </div>
     </div>
 </template>
 
 <script>
+    import DeliveryFormatMixin from '../Mixins/DeliveryFormat'
+
     export default {
         name: 'DeliverySelector',
+
+        mixins: [
+            DeliveryFormatMixin,
+        ],
 
         props: {
             /**
@@ -83,22 +87,12 @@
 
         data() {
             return {
-                days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 rangeIndex: 0,
                 mobileSelect: 'default',
             }
         },
 
         computed: {
-            /**
-             * Return list of day names for column headings
-             *
-             * @return {Array}
-             */
-            dayNames() {
-                return this.dateRange[0][0].map(o => this.days[o.getDay()])
-            },
-
             /**
              * Return list of all dates between start and end delivery date
              * Grouped for display
@@ -153,9 +147,9 @@
             },
 
             /**
-             * Return list of localised dates
+             * Get selected delivery option
              *
-             * @return {Array}
+             * @return {String | Boolean}
              */
             selectedDelivery() {
                 if (this.cartCollection.shippingMethod.name) {
@@ -230,17 +224,6 @@
                 const result = new Date(date)
                 result.setDate(result.getDate() + 1)
                 return result
-            },
-
-            /**
-             * Get delivery option in format required for mobile
-             *
-             * @return {Date}
-             */
-            getMobileOption(date) {
-                const deliveryOption = this.getDelivery(date)
-
-                return `${this.formatDate(date).mobile} - ${this.formatPrice(deliveryOption.price)}`
             },
 
             /**

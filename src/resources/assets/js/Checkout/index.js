@@ -6,6 +6,7 @@ import MxDelivery from './Components/DeliverySelector.vue'
 import DeliveryMonth from './Components/Delivery/DeliveryMonth.vue'
 import DeliveryWeek from './Components/Delivery/DeliveryWeek.vue'
 import DeliveryOption from './Components/Delivery/DeliveryOption.vue'
+import MobileDeliveryOption from './Components/Delivery/MobileDeliveryOption.vue'
 
 export default {
     install(Vue) {
@@ -17,5 +18,6 @@ export default {
         Vue.component('delivery-month', DeliveryMonth)
         Vue.component('delivery-week', DeliveryWeek)
         Vue.component('delivery-option', DeliveryOption)
+        Vue.component('mobile-delivery-option', MobileDeliveryOption)
     },
 }
