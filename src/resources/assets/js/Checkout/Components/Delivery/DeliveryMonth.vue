@@ -10,8 +10,14 @@
 </template>
 
 <script>
+    import DeliveryWeek from './DeliveryWeek.vue'
+
     export default {
         name: 'DeliveryMonth',
+
+        components: {
+            DeliveryWeek,
+        },
 
         props: {
             deliveryMonth: {

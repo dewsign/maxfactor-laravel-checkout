@@ -66,10 +66,17 @@
 </template>
 
 <script>
+    import DeliveryMonth from './Delivery/DeliveryMonth.vue'
     import DeliveryFormatMixin from '../Mixins/DeliveryFormat'
+    import MobileDeliveryOption from './Delivery/MobileDeliveryOption.vue'
 
     export default {
         name: 'DeliverySelector',
+
+        components: {
+            DeliveryMonth,
+            MobileDeliveryOption,
+        },
 
         mixins: [
             DeliveryFormatMixin,

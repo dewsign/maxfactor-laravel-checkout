@@ -10,8 +10,14 @@
 </template>
 
 <script>
+    import DeliveryOption from './DeliveryOption.vue'
+
     export default {
         name: 'DeliveryWeek',
+
+        components: {
+            DeliveryOption,
+        },
 
         props: {
             deliveryWeek: {
