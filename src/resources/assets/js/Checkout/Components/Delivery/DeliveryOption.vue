@@ -39,7 +39,7 @@
              * @return {Date}
              */
             delivery() {
-                const inputDate = new Date(this.deliveryOption).toLocaleDateString('en-GB').replace(/\u200E/g, '')
+                const inputDate = this.deliveryOption.toLocaleDateString('en-GB').replace(/\u200E/g, '')
 
                 if (this.localeDates.includes(inputDate)) {
                     return this.dates.find(dates => dates.localeDate === inputDate)
@@ -54,7 +54,7 @@
              * @return {String}
              */
             isSelected() {
-                const inputDate = new Date(this.deliveryOption).toLocaleDateString('en-GB').replace(/\u200E/g, '')
+                const inputDate = this.deliveryOption.toLocaleDateString('en-GB').replace(/\u200E/g, '')
 
                 return inputDate === this.cartCollection.shippingMethod.localeDate
             },
