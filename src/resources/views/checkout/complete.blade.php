@@ -33,10 +33,10 @@
                 </div>
                 <div class="checkout__completed-shipping">
                     <div class="checkout__complete-pay-ship">
-                        <p>@lang('Shipping method:') <strong>@{{ currentCheckout.shippingMethod.name }}</strong></p>
+                        <p>@lang('maxfactor::checkout.shipping_method'): <strong>@{{ currentCheckout.shippingMethod.name }}</strong></p>
                     </div>
                     <div class="checkout__complete-address">
-                        <strong>@lang('Shipping address')</strong>
+                        <strong>@lang('maxfactor::checkout.shipping_address')</strong>
                         <p>
                             @{{ currentCheckout.shipping.firstname }} @{{ currentCheckout.shipping.surname }}<br>
                             @{{ currentCheckout.shipping.company }}<br>
@@ -49,7 +49,7 @@
                         </p>
                     </div>
                     <div class="checkout__complete-address">
-                        <strong>Billing address</strong>
+                        <strong>@lang('maxfactor::checkout.billing_address')</strong>
                         <p>
                             @{{ currentCheckout.billing.firstname }} @{{ currentCheckout.billing.surname }}<br>
                             @{{ currentCheckout.billing.company }}<br>

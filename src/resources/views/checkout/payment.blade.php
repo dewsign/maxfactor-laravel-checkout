@@ -69,11 +69,11 @@
                                 <h3>@lang('Billing address')</h3>
                                 <div class="checkout__shipping-option">
                                     <input name="billingUseShipping" id="billingUseShipping" type="radio" v-model="currentCheckout.useShipping" :value="true">
-                                    <label for="billingUseShipping">@lang('Same as shipping address')</label>
+                                    <label for="billingUseShipping">@lang('maxfactor::checkout.same_as_shipping')</label>
                                 </div>
                                 <div class="checkout__shipping-option">
                                     <input name="billingUseDifferent" id="billingUseDifferent" type="radio" v-model="currentCheckout.useShipping" :value="false">
-                                    <label for="billingUseDifferent">@lang('Use a different billing address')</label>
+                                    <label for="billingUseDifferent">@lang('maxfactor::checkout.use_different_billing')</label>
                                 </div>
                             </div>
                             <div class="checkout__customer-info checkout__customer-info--no-border" v-if="!currentCheckout.useShipping">
@@ -158,7 +158,7 @@
                     @component('maxfactor::checkout.components.actions')
                         @slot('continueLabel', __('Place order'))
                         @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'complete']))
-                        @slot('returnLabel', __('Return to shipping'))
+                        @slot('returnLabel', __('maxfactor::checkout.return_to_shipping'))
                         @slot('returnUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
                         @slot('onClick', 'processCheckout')
                     @endcomponent

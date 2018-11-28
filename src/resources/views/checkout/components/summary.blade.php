@@ -12,9 +12,9 @@
     </div>
     {{-- TODO: Display only after step 1 has been completed   --}}
     <div class="checkout__shipping">
-        <p>@lang('Shipping:')<span>@{{ cartShippingTotal() | money | default(isCartShippingPoa ? ' POA' : '0.00') }}</span></p>
+        <p>@lang('maxfactor::checkout.shipping'):<span>@{{ cartShippingTotal() | money | default(isCartShippingPoa ? ' POA' : '0.00') }}</span></p>
         @if (isset($editable) && $editable || !isset($editable))
-            <a href="{{ route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']) }}">Change shipping</a>
+            <a href="{{ route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']) }}">@lang('maxfactor::checkout.change_shipping')</a>
         @endif
     </div>
     <div class="checkout__subtotal">
