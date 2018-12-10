@@ -31,6 +31,8 @@
                 dusk="v-cartitem-component"
             ></mx-cart-item>
 
+            @includeIf('cart.upsells')
+
             <div class="cart__total-options">
                 <div class="cart__total-notes">
                     <label>@lang('Notes for :company', ['company' => config('app.name')])</label>
