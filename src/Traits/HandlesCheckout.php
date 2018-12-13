@@ -275,9 +275,9 @@ trait HandlesCheckout
     public function checkoutStageShowPaypalauth()
     {
         $this->syncSession();
-        
+
         $paypal = (new Paypal());
-        
+
         $response = $paypal->authorize([
             'amount' => $paypal->formatAmount($this->getFirst('finalTotal')),
             'transactionId' => $this->getFirst('orderID'),
