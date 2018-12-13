@@ -31,7 +31,7 @@
                 dusk="v-cartitem-component"
             ></mx-cart-item>
 
-            @includeIf('cart.upsells')
+            @includeIf('maxfactor::checkout.cart.upsells')
 
             <div class="cart__total-options">
                 <div class="cart__total-notes">
