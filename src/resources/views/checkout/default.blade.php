@@ -44,7 +44,7 @@
                             <div class="checkout__newsletter" v-if="canEditShipping">
                                 <label><input type="checkbox" v-model="currentCheckout.user.newsletter">@lang('Sign up to our newsletter')</label>
                             </div>
-                            <h3>@lang('Shipping address')</h3>
+                            <h3>@lang('maxfactor::checkout.shipping_address')</h3>
 
                             <div class="user__field user__field--half">
                                 <label for="addressFirstName" class="label--required">@lang('First name')</label>
@@ -131,7 +131,7 @@
                             </div>
                         </div>
                         @component('maxfactor::checkout.components.actions')
-                            @slot('continueLabel', __('Continue to shipping method'))
+                            @slot('continueLabel', __('maxfactor::checkout.continue_to_shipping'))
                             @slot('continueUrl', route('checkout.show', ['uid' => $uid, 'stage' => 'shipping']))
                             @slot('returnLabel', __('Return to cart'))
                             @slot('returnUrl', route('cart.index'))
