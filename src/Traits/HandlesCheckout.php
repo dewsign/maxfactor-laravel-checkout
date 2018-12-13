@@ -4,6 +4,7 @@ namespace Maxfactor\Checkout\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -274,9 +275,9 @@ trait HandlesCheckout
     public function checkoutStageShowPaypalauth()
     {
         $this->syncSession();
-
+        
         $paypal = (new Paypal());
-
+        
         $response = $paypal->authorize([
             'amount' => $paypal->formatAmount($this->getFirst('finalTotal')),
             'transactionId' => $this->getFirst('orderID'),
@@ -285,9 +286,17 @@ trait HandlesCheckout
             'returnUrl' => $paypal->getReturnUrl($this->uid),
         ])->send();
 
+        // This checks for success status.. not helpfully named
         if ($response->isRedirect()) {
             $response->redirect();
+        } else {
+            // There has been an error authorising with PayPal
+            Log::info($response->getData());
+            header('Location: ' . route('cart.index'), true, 303);
         }
+
+        // Do not proceed to rendering
+        exit();
     }
 
     /**
