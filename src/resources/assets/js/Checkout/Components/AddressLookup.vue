@@ -165,6 +165,11 @@
              * Show the full address if we already have the details when the component is mounted
              */
             if (this.haveAddress) this.ui.showAddress = true
+
+            /**
+             * Show the full address if we are returning from paypal
+             */
+            if (this.activeCartCollection.payment.provider) this.ui.showAddress = true
         },
 
     }
