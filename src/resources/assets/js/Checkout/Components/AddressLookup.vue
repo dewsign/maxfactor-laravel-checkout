@@ -169,7 +169,7 @@
             /**
              * Show the full address if we are returning from paypal
              */
-            if (this.activeCartCollection.payment.provider) this.ui.showAddress = true
+            if (this.activeCartCollection.payment.provider === 'paypal') this.ui.showAddress = true
         },
 
     }
