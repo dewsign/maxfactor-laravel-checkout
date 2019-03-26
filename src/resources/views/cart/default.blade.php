@@ -52,12 +52,14 @@
 
                         <div slot-scope="cartNetTotal">
                             <button
+                                id="cart-checkout-default"
                                 data-url="{{ route('checkout.show', ['uid' => 'UUID']) }}"
                                 class="btn-primary"
                                 @click.prevent="prepareCheckout"
                             >@lang('maxfactor::checkout.checkout_button')</button>
 
                             <button
+                                id="cart-checkout-paypal"
                                 data-url="{{ route('checkout.store', ['uid' => 'UUID', 'paypalauth']) }}"
                                 @click.prevent="prepareCheckout"
                                 class="btn-paypal"
