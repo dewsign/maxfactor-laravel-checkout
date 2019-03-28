@@ -61,6 +61,11 @@ trait HandlesCheckout
      */
     public function stage(string $stage = null, string $mode = 'show')
     {
+        if ($mode === 'show' && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+            Session::put('checkoutError', 'Order value error');
+            header('Location: ' . route('cart.index'));
+        }
+        
         $uid = $this->uid = Route::current()->parameter('uid');
 
         if (!$stage) {
