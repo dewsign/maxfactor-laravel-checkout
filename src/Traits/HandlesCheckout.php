@@ -214,6 +214,13 @@ trait HandlesCheckout
      */
     public function checkoutStageStoreComplete()
     {
+        /**
+         * Do not proceed if order has dropped below min value
+         */
+        if ($this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+            return $this;
+        }
+
         $this->syncSession();
 
         $provider = $this->getProvider();
