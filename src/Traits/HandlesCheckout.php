@@ -61,7 +61,14 @@ trait HandlesCheckout
      */
     public function stage(string $stage = null, string $mode = 'show')
     {
-        if ($mode === 'show' && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+        /**
+         * Ensure a customer cannot progress through the checkout if their order drops below the min value
+         * This could happen if a product becomes unavailable and is removed from the cart
+         * This is not being checked on the first stage as the finalValue will not have been updated here
+         */
+        if ($stage !== 'default'
+            && $mode === 'show'
+            && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
             Session::put('checkoutError', 'Order value error');
             header('Location: ' . route('cart.index'));
         }
