@@ -61,20 +61,6 @@ trait HandlesCheckout
      */
     public function stage(string $stage = null, string $mode = 'show')
     {
-        /**
-         * Ensure a customer cannot progress through the checkout if their order drops below the min value
-         * This could happen if a product becomes unavailable and is removed from the cart
-         * This is not being checked on the first stage as the finalValue will not have been updated here
-         */
-        if ($stage !== 'default'
-            && $mode === 'show'
-            && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
-            Session::put('checkoutError', 'Order value error');
-            Session::save();
-            header('Location: ' . route('cart.index'));
-            exit();
-        }
-        
         $uid = $this->uid = Route::current()->parameter('uid');
 
         if (!$stage) {
@@ -100,6 +86,20 @@ trait HandlesCheckout
 
             return $value !== "";
         })->all());
+
+        /**
+         * Ensure a customer cannot progress through the checkout if their order drops below the min value
+         * This could happen if a product becomes unavailable and is removed from the cart
+         * This is not being checked on the first stage as the finalValue will not have been updated here
+         */
+        if ($stage !== 'default'
+            && $mode === 'show'
+            && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+            Session::put('checkoutError', 'Order value error');
+            Session::save();
+            header('Location: ' . route('cart.index'));
+            exit();
+        }
 
         Session::put('checkoutUID', $this->getCurrentCheckoutId());
 
