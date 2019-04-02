@@ -70,7 +70,9 @@ trait HandlesCheckout
             && $mode === 'show'
             && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
             Session::put('checkoutError', 'Order value error');
+            Session::save();
             header('Location: ' . route('cart.index'));
+            exit();
         }
         
         $uid = $this->uid = Route::current()->parameter('uid');
