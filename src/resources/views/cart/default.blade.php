@@ -15,8 +15,13 @@
     </section>
 
     <section class="cart">
-        <div class="cart__group">
+        @if (Session::has('checkoutError'))
+            <div class="checkout__order-error">
+                <p>{{ __(Session::pull('checkoutError')) }}</p>
+            </div> 
+        @endif
 
+        <div class="cart__group">            
             <ul>
                 <li>@lang('maxfactor::checkout.product')</li>
                 <li></li>
