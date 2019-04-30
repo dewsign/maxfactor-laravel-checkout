@@ -94,7 +94,7 @@ trait HandlesCheckout
          */
         if ($stage !== 'default'
             && $mode === 'show'
-            && $this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+            && $this->getFirst('finalTotalExcDiscount') < config('maxfactor-checkout.minimum_order')) {
             Session::put('checkoutError', 'Order value error');
             Session::save();
             header('Location: ' . route('cart.index'));
@@ -219,7 +219,7 @@ trait HandlesCheckout
         /**
          * Do not proceed if order has dropped below min value
          */
-        if ($this->getFirst('finalTotal') < config('maxfactor-checkout.minimum_order')) {
+        if ($this->getFirst('finalTotalExcDiscount') < config('maxfactor-checkout.minimum_order')) {
             return $this;
         }
 
