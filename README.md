@@ -37,4 +37,4 @@ The `CheckoutController` in this package uses a `show()` and `store()` method wh
 
 This package also provides a `HandlesPostage` trait which can be implemented in a similar fashion to the `HandlesCheckout` trait.  This allows you to use custom delivery date configurations in your host application.
 
-A flow diagram is included in this repository to illustrate what is intended to happen at each stage of the checkout and the methods called to achieve this.
+A flow diagram is included in this repository to illustrate what is intended to happen at each stage of the checkout and the methods called to achieve this. [Flowmap](https://github.com/dewsign/maxfactor-laravel-checkout/blob/master/flowdiagram.svg)
