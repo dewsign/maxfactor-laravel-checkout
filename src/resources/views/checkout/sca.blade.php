@@ -1,0 +1,1 @@
+@include('maxfactor::checkout.complete')

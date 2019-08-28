@@ -14,7 +14,7 @@
         "laravel/framework": "^5",
         "maxfactor/support": "^1.0.0|^2.0.0",
         "league/omnipay": "^3.0",
-        "omnipay/stripe": "^3.0",
+        "omnipay/stripe": "3.1.x-dev",
         "omnipay/paypal": "^3.0"
     },
     "autoload": {

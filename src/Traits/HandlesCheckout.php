@@ -262,6 +262,48 @@ trait HandlesCheckout
     }
 
     /**
+     * This step is called after the user has been redirected
+     * to and completed the bank's 3DS authentication.
+     *
+     * @return void
+     */
+    public function checkoutStageShowSca()
+    {
+        $this->syncSession();
+
+        $uid = Route::current()->parameter('uid');
+
+        // Retrieve original data from session
+        $paymentIntent = Session::get('paymentIntent');
+
+        extract($paymentIntent);
+
+        // Commit the purchase to the stripe payment gateway
+        $paymentResponse = (new PaymentWrapper($this->getProvider()))
+            ->setUid($uid)
+            ->setAmount($amount)
+            ->setOrderId($reference)
+            ->confirm(Session::get('paymentIntentReference'));
+
+        /**
+         * Send the payment response to the Api for processing
+         */
+        App::make(Checkout::class, [
+            'uid' => $uid,
+            'params' => [
+                'checkout' => $checkout,
+                'paymentResponse' => $paymentResponse->getData(),
+            ],
+        ]);
+
+        /**
+         * We don't want to actually render this page, but instead redirect
+         * to the order completed screen.
+         */
+        abort(302, '', ['Location' => route('checkout.show', [$uid, 'complete'])]);
+    }
+
+    /**
      * The final stage of the checkout. This is where we show the result
      * or confirmation to the user
      *
@@ -407,7 +449,7 @@ trait HandlesCheckout
     /**
      * Get payment provider for checkout
      *
-     * @return void
+     * @return string
      */
     private function getProvider()
     {
