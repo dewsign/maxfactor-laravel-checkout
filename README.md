@@ -14,9 +14,9 @@ A Laravel checkout companion to work with Maxfactor Vue Cart.
 
 ### Dependencies
 
-* [Maxfactor Vue Cart 1.0.0](https://github.com/dewsign/maxfactor-vue-cart)
+* [Maxfactor Vue Cart 2.0.0](https://github.com/dewsign/maxfactor-vue-cart)
 
-### Configuration 
+### Configuration
 
 Environment configuration:
 
