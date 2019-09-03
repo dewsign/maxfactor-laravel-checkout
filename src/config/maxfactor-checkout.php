@@ -9,6 +9,7 @@ return [
         'DEFAULT' => '1',
         'SHIPPING' => '2',
         'PAYMENT' => '3',
+        'SCA' => '4',
         'COMPLETE' => '4',
         'PAYPALCOMPLETE' => '4',
     ],

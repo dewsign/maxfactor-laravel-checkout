@@ -106,13 +106,29 @@ class PaymentWrapper
     }
 
     /**
+     * Delegate to relevant confirmation method
+     *
+     * @return array
+     */
+    public function confirm($params = [])
+    {
+        $confirmationMethod = sprintf("confirm%s", ucfirst($this->provider));
+
+        if (method_exists($this, $confirmationMethod)) {
+            return $this->{$confirmationMethod}($params);
+        }
+
+        return [];
+    }
+
+    /**
      * Pass to stripe payment handler
      *
      * @return array
      */
     protected function processStripe()
     {
-        $token = Request::get('checkout')['payment']['token']['id'];
+        $token = Stripe::getToken();
 
         $paymentResponse = (new Stripe())
             ->idempotencyKey($token) // We only want to allow a single charge per token
@@ -121,9 +137,32 @@ class PaymentWrapper
             ->reference($this->orderID)
             ->charge();
 
+        /**
+         * Store the current checkout details in the session to retrieve when
+         * handling the payment intent response.
+         */
+        Session::put('paymentIntent', [
+            'token' => $token,
+            'amount' => $this->amount,
+            'reference' => $this->orderID,
+            'checkout' => collect(Request::get('checkout'))->toArray(),
+        ]);
+
         Cache::put($this->cacheKey(), 'processed', 2/60);
 
         return $paymentResponse->getData();
+    }
+
+    protected function confirmStripe($params = [])
+    {
+        $token = Stripe::getToken();
+
+        return (new Stripe())
+            ->idempotencyKey($token) // We only want to allow a single charge per token
+            ->token($token)
+            ->amount($this->amount)
+            ->reference($this->orderID)
+            ->confirm($params);
     }
 
     /**

@@ -9,9 +9,9 @@ class StripePaymentRequest extends FormRequest
 {
     protected $rules = [
         'checkout.billing.nameoncard' => 'required|string',
-        'checkout.payment.token.id' => 'required|string',
-        'checkout.payment.token.object' => 'required|string',
-        'checkout.payment.token.type' => 'required|string',
+        'checkout.payment.paymentMethod.id' => 'required|string',
+        'checkout.payment.paymentMethod.object' => 'required|string',
+        'checkout.payment.paymentMethod.type' => 'required|string',
         'checkout.user.terms' => 'required|accepted',
     ];
 
