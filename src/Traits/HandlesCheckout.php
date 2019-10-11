@@ -92,10 +92,8 @@ trait HandlesCheckout
          * This could happen if a product becomes unavailable and is removed from the cart
          * This is not being checked on the first stage as the finalValue will not have been updated here
          */
-        if ($stage !== 'default'
-            && $mode === 'show'
-            && $this->getFirst('finalTotalExcDiscount') < config('maxfactor-checkout.minimum_order')) {
-            Session::put('checkoutError', 'Order value error');
+        if (!$this->hasValidOrderTotal($mode)) {
+            Session::put('checkoutError', "Order value error ({$this->getFirst('finalTotalExcDiscount')})");
             Session::save();
             header('Location: ' . route('cart.index'));
             exit();
@@ -113,6 +111,33 @@ trait HandlesCheckout
         }
 
         return $this;
+    }
+
+    /**
+     * Validates if the final total passes the minimum order requirements.
+     *
+     * @param string $mode
+     * @return boolean
+     */
+    protected function hasValidOrderTotal($mode)
+    {
+        if ($mode !== 'show') {
+            return true;
+        }
+
+        if (in_array($this->getFirst('stage'), [
+            'default',
+            'complete',
+            'paypalcomplete',
+        ])) {
+            return true;
+        }
+
+        if ($this->getFirst('finalTotalExcDiscount') >= config('maxfactor-checkout.minimum_order')) {
+            return true;
+        }
+
+        return false;
     }
 
     private function syncSession()
